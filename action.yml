@@ -1,5 +1,5 @@
 name: "TOML Action"
-description: "TOML 1.0.0 Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File."
+description: "TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File."
 author: "Shane"
 
 branding:
@@ -12,7 +12,6 @@ inputs:
     required: true
   path:
     description: "JSONPath to Read or Edit"
-    required: true
   value:
     description: "Value to Edit/Update"
   write:

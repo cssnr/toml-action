@@ -32,13 +32,13 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-TOML 1.0.0 Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File.
+TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File.
 
 This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
-Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for TOML parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
+Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.0.0](https://toml.io/en/v1.0.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for [JSONPath](https://jsonpath.com/).
 
-<details><summary>View Sample TOML File</summary>
+<details><summary>View Example TOML File</summary>
 
 ```toml
 title = "TOML Example"
@@ -51,34 +51,34 @@ authors = [{ name="Shane" }]
 
 </details>
 
-**Get a Value.**
+**Get a Value**
 
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   id: toml
   uses: cssnr/toml-action@v1
   with:
-    file: '.github/test/test.toml'
-    path: '$.project.authors[0].name'
+    file: .github/test/test.toml
+    path: $.project.authors[0].name
 
-- name: 'Echo Value'
+- name: Echo Value
   run: |
-    echo "value: ${{ steps.toml.outputs.value }}"
+    echo "${{ steps.toml.outputs.value }}"
 ```
 
 Results: `Shane`
 
-**Edit a Value.**
+**Edit a Value**
 
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   uses: cssnr/toml-action@v1
   with:
-    file: '.github/test/test.toml'
-    path: '$.project.authors[0].name'
-    value: 'I Made This'
+    file: .github/test/test.toml
+    path: $.project.authors[0].name
+    value: I Made This
 
-- name: 'Cat File'
+- name: Cat File
   run: |
     cat ".github/test/test.toml"
 ```
@@ -100,21 +100,59 @@ Note: the results are different from the source, but the structure is identical.
 
 </details>
 
+**Parse a File**
+
+```yaml
+- name: TOML Action
+  id: toml
+  uses: cssnr/toml-action@v1
+  with:
+    file: .github/test/test.toml
+
+- name: Echo Results
+  run: |
+    echo "name: ${{ fromJSON(steps.toml.outputs.data).project.name }}"
+    echo "data: ${{ fromJSON(steps.toml.outputs.data) }}"
+```
+
+Results **name**: `toml-action`
+
+<details><summary>Results <b>data</b>: <i>click to view</i></summary>
+
+```json
+{
+  "title": "TOML Example",
+  "project": {
+    "name": "toml-action",
+    "dynamic": ["version"],
+    "authors": [
+      {
+        "name": "Shane"
+      }
+    ]
+  }
+}
+```
+
+</details>
+
 See the [Inputs](#Inputs) for more options...
 
 ## Features
 
 - Use JSONPath
+- Parse TOML File
 - Read TOML Value
 - Edit TOML Value
 - Write the Results
+- Output Parsed Value
 - Output JSON Results
 - Output TOML Results
 
 ### Upcoming
 
-- Convert input File/JSON/YAML to TOML
-- Only read TOML File without a Path?
+- Convert Input File/JSON/YAML to TOML
+- Add Input to Set the `type` for [value](#value)
 
 > [!TIP]  
 > Please submit a [Feature Request](https://github.com/cssnr/toml-action/discussions/categories/feature-requests)
@@ -142,18 +180,20 @@ Most of these actions are forks/clones of each other and none of them support JS
 | Input             | Default&nbsp;Value | Description&nbsp;of&nbsp;Input                    |
 | :---------------- | :----------------- | :------------------------------------------------ |
 | [file](#file)     | _Required_         | TOML File Path                                    |
-| [path](#path)     | _Required_         | [JSONPath](https://jsonpath.com/) to Read or Edit |
+| [path](#path)     | -                  | [JSONPath](https://jsonpath.com/) to Read or Edit |
 | [value](#value)   | -                  | Value to Edit/Update                              |
 | [write](#write)   | `true`             | Write Updates to [file](#file)                    |
 | [output](#output) | [file](#file)      | Write to a Different File                         |
 
 #### file
 
-This is the TOML file to process.
+This is the TOML file path to process relative to the working directory.
 
 #### path
 
 A [JSONPath](https://jsonpath.com/) key to read or edit.
+
+Leaving this blank will only read the file and output the JSON/TOML results.
 
 String key: `$.key`  
 Nested key: `$.key.nested`  
@@ -163,13 +203,15 @@ Array key: `$.key.nested[0]`
 
 Value to edit/update at the given [path](#path).
 
-Leaving this blank will only read the value.
+Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a string, boolean or number.
+
+Leaving this blank will only read the value from [path](#path) and output the results.
 
 #### write
 
 Write the results with the [value](#value) back to the [file](#file).
 
-To write to a different file, set the [output](#output).
+To write to a different file, set the [output](#output) to the file path.
 
 Default: `true`
 
@@ -188,15 +230,17 @@ Default: [file](#file)
 | data   | JSON Data    |
 | toml   | TOML String  |
 
+Note: All outputs are strings parsed with `JSON.stringify()`.
+
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   id: toml
   uses: cssnr/toml-action@v1
   with:
     file: file.toml
     path: author.name
 
-- name: 'Echo Outputs'
+- name: Echo Outputs
   env:
     toml: ${{ steps.toml.outputs.toml }}
   run: |
@@ -259,6 +303,7 @@ Additionally, you can support other [GitHub Actions](https://actions.cssnr.com/)
 - [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action?tab=readme-ov-file#readme)
 - [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
+- [TOML Action](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
 - [Update JSON Value Action](https://github.com/cssnr/update-json-value-action?tab=readme-ov-file#readme)
 - [JSON Key Value Check Action](https://github.com/cssnr/json-key-value-check-action?tab=readme-ov-file#readme)
 - [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action?tab=readme-ov-file#readme)
