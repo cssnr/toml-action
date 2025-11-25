@@ -36,7 +36,7 @@ TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Resul
 
 This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
-Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.0.0](https://toml.io/en/v1.0.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
+Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.0.0](https://toml.io/en/v1.0.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for [JSONPath](https://jsonpath.com/).
 
 <details><summary>View Example TOML File</summary>
 
@@ -97,6 +97,41 @@ name = "I Made This"
 ```
 
 Note: the results are different from the source, but the structure is identical.
+
+</details>
+
+**Parse a File**
+
+```yaml
+- name: 'TOML Action'
+  uses: cssnr/toml-action@v1
+  with:
+    file: '.github/test/test.toml'
+
+- name: 'Echo Results'
+  run: |
+    echo "name: ${{ fromJSON(steps.test.outputs.data).project.name }}"
+    echo "data: ${{ fromJSON(steps.test.outputs.data) }}"
+```
+
+Results **name**: `toml-action`
+
+<details><summary>Results <b>data</b>: <i>click to view</i></summary>
+
+```json
+{
+  "title": "TOML Example",
+  "project": {
+    "name": "toml-action",
+    "dynamic": ["version"],
+    "authors": [
+      {
+        "name": "Shane"
+      }
+    ]
+  }
+}
+```
 
 </details>
 
