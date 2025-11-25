@@ -30424,11 +30424,11 @@ async function main() {
     coreExports.endGroup();
     const value = parseJSONPath(inputs.path, data);
     coreExports.info(`➡️ Parsed Value: \u001b[36;1m${value}`);
-    coreExports.info(`          type: \u001b[33;1m${typeof value}`);
+    coreExports.info(`    type: \u001b[33;1m${typeof value}`);
     if (inputs.path && inputs.value) {
         const parsed = parseValue(inputs.value);
         coreExports.info(`📝 Updating Value: \u001b[36;1m${parsed}`);
-        coreExports.info(`             type: \u001b[33;1m${typeof parsed}`);
+        coreExports.info(`    type: \u001b[33;1m${typeof parsed}`);
         setJSONPath(data, inputs.path, inputs.value);
         coreExports.startGroup('Updated Data');
         console.log(data);

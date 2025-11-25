@@ -36,13 +36,13 @@ async function main() {
     // Parse Value from Path
     const value = parseJSONPath(inputs.path, data)
     core.info(`➡️ Parsed Value: \u001b[36;1m${value}`)
-    core.info(`          type: \u001b[33;1m${typeof value}`)
+    core.info(`    type: \u001b[33;1m${typeof value}`)
 
     // Set Value on Data
     if (inputs.path && inputs.value) {
         const parsed = parseValue(inputs.value)
         core.info(`📝 Updating Value: \u001b[36;1m${parsed}`)
-        core.info(`             type: \u001b[33;1m${typeof parsed}`)
+        core.info(`    type: \u001b[33;1m${typeof parsed}`)
         setJSONPath(data, inputs.path, inputs.value)
         core.startGroup('Updated Data')
         console.log(data)
