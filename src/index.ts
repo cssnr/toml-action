@@ -62,7 +62,7 @@ async function main() {
             core.info(`📁 Creating Directory: \u001b[34;1m${dir}`)
             fs.mkdirSync(dir, { recursive: true })
         }
-        core.info(`💾 Writing to File: \u001b[32;1m${file}`)
+        core.info(`💾 Writing to File: \u001b[33;1m${file}`)
         fs.writeFileSync(file, toml)
     }
 

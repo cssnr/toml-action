@@ -113,7 +113,8 @@ See the [Inputs](#Inputs) for more options...
 
 ### Upcoming
 
-- Convert input File/JSON/YAML to TOML
+- Convert Input File/JSON/YAML to TOML
+- Add Input to Set the `type` for [value](#value)
 
 > [!TIP]  
 > Please submit a [Feature Request](https://github.com/cssnr/toml-action/discussions/categories/feature-requests)
@@ -260,6 +261,7 @@ Additionally, you can support other [GitHub Actions](https://actions.cssnr.com/)
 - [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action?tab=readme-ov-file#readme)
 - [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
+- [TOML Action](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
 - [Update JSON Value Action](https://github.com/cssnr/update-json-value-action?tab=readme-ov-file#readme)
 - [JSON Key Value Check Action](https://github.com/cssnr/json-key-value-check-action?tab=readme-ov-file#readme)
 - [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action?tab=readme-ov-file#readme)
