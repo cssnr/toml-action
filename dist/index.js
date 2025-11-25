@@ -30420,7 +30420,7 @@ async function main() {
     const fileData = fs.readFileSync(inputs.file);
     const data = parse(fileData.toString());
     coreExports.startGroup('Data');
-    console.log(data);
+    coreExports.info(JSON.stringify(data, null, 2));
     coreExports.endGroup();
     const value = parseJSONPath(inputs.path, data);
     coreExports.info(`➡️ Parsed Value: \u001b[36;1m${value}`);
@@ -30431,12 +30431,12 @@ async function main() {
         coreExports.info(`    type: \u001b[33;1m${typeof parsed}`);
         setJSONPath(data, inputs.path, inputs.value);
         coreExports.startGroup('Updated Data');
-        console.log(data);
+        coreExports.info(JSON.stringify(data, null, 2));
         coreExports.endGroup();
     }
     const toml = stringify(data);
     coreExports.startGroup('TOML');
-    console.log(toml);
+    coreExports.info(toml);
     coreExports.endGroup();
     if (inputs.write && (inputs.value || inputs.output)) {
         const file = inputs.output || inputs.file;
@@ -30458,7 +30458,7 @@ function parseJSONPath(value, data) {
     if (!value)
         return '';
     const values = JSONPath({ path: value, json: data });
-    console.log('values:', values);
+    console.log('parsed values:', values);
     if (!values.length) {
         throw new Error(`No Values for Path: ${value}`);
     }
