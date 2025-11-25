@@ -104,14 +104,15 @@ Note: the results are different from the source, but the structure is identical.
 
 ```yaml
 - name: 'TOML Action'
+  id: toml
   uses: cssnr/toml-action@v1
   with:
     file: '.github/test/test.toml'
 
 - name: 'Echo Results'
   run: |
-    echo "name: ${{ fromJSON(steps.test.outputs.data).project.name }}"
-    echo "data: ${{ fromJSON(steps.test.outputs.data) }}"
+    echo "name: ${{ fromJSON(steps.toml.outputs.data).project.name }}"
+    echo "data: ${{ fromJSON(steps.toml.outputs.data) }}"
 ```
 
 Results **name**: `toml-action`
