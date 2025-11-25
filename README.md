@@ -141,9 +141,11 @@ See the [Inputs](#Inputs) for more options...
 ## Features
 
 - Use JSONPath
+- Parse TOML File
 - Read TOML Value
 - Edit TOML Value
 - Write the Results
+- Output Parsed Value
 - Output JSON Results
 - Output TOML Results
 
@@ -185,7 +187,7 @@ Most of these actions are forks/clones of each other and none of them support JS
 
 #### file
 
-This is the TOML file to process.
+This is the TOML file path to process relative to the working directory.
 
 #### path
 
