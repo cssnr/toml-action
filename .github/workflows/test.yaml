@@ -23,6 +23,7 @@ concurrency:
 
 env:
   file: .github/test/test.toml
+  temp: tmp/temp.toml
 
 jobs:
   test:
@@ -69,7 +70,7 @@ jobs:
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
-      - name: "Validate JSON"
+      - name: "Validate JSON Data"
         if: ${{ fromJSON(steps.test.outputs.data).project.name != 'toml-action' }}
         run: |
           echo "Output Invalid: data.project.name" && exit 1
@@ -80,6 +81,7 @@ jobs:
         uses: ./
         with:
           file: ${{ env.file }}
+          output: ${{ env.temp }}
 
       - name: "Validate Updated Outputs"
         #if: ${{ !github.event.act }}
@@ -90,6 +92,15 @@ jobs:
             value:
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
+
+      - name: "Validate Output File"
+        #if: ${{ !github.event.act }}
+        run: |
+          if [ ! -f "${{ env.temp }}" ];then
+            echo "Missing Output File: ${{ env.temp }}"
+            exit 1
+          fi
+          cat "${{ env.temp }}"
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
