@@ -30,7 +30,7 @@ async function main() {
     const fileData: Buffer = fs.readFileSync(inputs.file)
     const data = parse(fileData.toString())
     core.startGroup('Data')
-    console.log(data)
+    core.info(JSON.stringify(data, null, 2))
     core.endGroup() // Data
 
     // Parse Value from Path
@@ -45,14 +45,14 @@ async function main() {
         core.info(`    type: \u001b[33;1m${typeof parsed}`)
         setJSONPath(data, inputs.path, inputs.value)
         core.startGroup('Updated Data')
-        console.log(data)
+        core.info(JSON.stringify(data, null, 2))
         core.endGroup() // Updated Data
     }
 
     // Parse TOML from Updated Data
     const toml = stringify(data)
     core.startGroup('TOML')
-    console.log(toml)
+    core.info(toml)
     core.endGroup() // TOML
 
     if (inputs.write && (inputs.value || inputs.output)) {
@@ -78,7 +78,7 @@ async function main() {
 function parseJSONPath(value: string, data: object) {
     if (!value) return ''
     const values = JSONPath({ path: value, json: data })
-    console.log('values:', values)
+    console.log('parsed values:', values)
     if (!values.length) {
         throw new Error(`No Values for Path: ${value}`)
     }
