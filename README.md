@@ -34,9 +34,9 @@
 
 TOML 1.0.0 Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File.
 
-Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for TOML parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
+This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
-This action was built from the ground up using currently active libraries. See the [Comparison](#Comparison) for more details.
+Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for TOML parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
 
 <details><summary>View Sample TOML File</summary>
 
@@ -56,7 +56,7 @@ authors = [{ name="Shane" }]
 ```yaml
 - name: 'TOML Action'
   id: toml
-  uses: cssnr/toml-action@master
+  uses: cssnr/toml-action@v1
   with:
     file: '.github/test/test.toml'
     path: '$.project.authors[0].name'
@@ -72,7 +72,7 @@ Results: `Shane`
 
 ```yaml
 - name: 'TOML Action'
-  uses: cssnr/toml-action@master
+  uses: cssnr/toml-action@v1
   with:
     file: '.github/test/test.toml'
     path: '$.project.authors[0].name'
@@ -83,7 +83,7 @@ Results: `Shane`
     cat ".github/test/test.toml"
 ```
 
-<details><summary>Results</summary>
+<details><summary>Results: <i>click to view</i></summary>
 
 ```toml
 title = "TOML Example"
@@ -114,28 +114,28 @@ See the [Inputs](#Inputs) for more options...
 ### Upcoming
 
 - Convert input File/JSON/YAML to TOML
-- Only read TOML File and Output JSON?
+- Only read TOML File without a Path?
 
 > [!TIP]  
 > Please submit a [Feature Request](https://github.com/cssnr/toml-action/discussions/categories/feature-requests)
-> to let us know what you want...
+> to let us know what you want to see...
 
 ## Comparison
 
 Most of these actions are forks/clones of each other and none of them support JSONPath or both Read and Write.
 
-| Repository                                                                    | Read | Write | Path | TOML&nbsp;Version | TOML&nbsp;Parser                                       |                                                                                                      Star&nbsp;Fork                                                                                                       |                                                         Last&nbsp;Updated                                                          | Repository&nbsp;Language                                                                        |
-| :---------------------------------------------------------------------------- | :--: | :---: | :--: | :---------------- | :----------------------------------------------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------- |
-| [cssnr/toml-action](https://github.com/cssnr/toml-action)                     |  ✅  |  ✅   |  ✅  | `1.0.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) |           ![Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&label=%20&color=blue)           |      ![Updated](https://img.shields.io/github/last-commit/cssnr/toml-action?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/cssnr/toml-action?style=flat)           |
-| [SebRollen/toml-action](https://github.com/SebRollen/toml-action)             |  ✅  |  ❌   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |       ![Stars](https://img.shields.io/github/stars/SebRollen/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/SebRollen/toml-action?style=flat&label=%20&color=blue)       |    ![Updated](https://img.shields.io/github/last-commit/SebRollen/toml-action?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/SebRollen/toml-action?style=flat)       |
-| [ciiiii/toml-editor](https://github.com/ciiiii/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/ciiiii/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/ciiiii/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/ciiiii/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/ciiiii/toml-editor?style=flat)          |
-| [colt-1/toml-editor](https://github.com/colt-1/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/colt-1/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/colt-1/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/colt-1/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/colt-1/toml-editor?style=flat)          |
-| [rahulp959/toml-editor](https://github.com/rahulp959/toml-editor)             |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |       ![Stars](https://img.shields.io/github/stars/rahulp959/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/rahulp959/toml-editor?style=flat&label=%20&color=blue)       |    ![Updated](https://img.shields.io/github/last-commit/rahulp959/toml-editor?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/rahulp959/toml-editor?style=flat)       |
-| [kaachod/toml-editor](https://github.com/kaachod/toml-editor)                 |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |         ![Stars](https://img.shields.io/github/stars/kaachod/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/kaachod/toml-editor?style=flat&label=%20&color=blue)         |     ![Updated](https://img.shields.io/github/last-commit/kaachod/toml-editor?style=flat&label=%20&display_timestamp=committer)     | ![Language](https://img.shields.io/github/languages/top/kaachod/toml-editor?style=flat)         |
-| [sandstromviktor/toml-editor](https://github.com/sandstromviktor/toml-editor) |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      | ![Stars](https://img.shields.io/github/stars/sandstromviktor/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/sandstromviktor/toml-editor?style=flat&label=%20&color=blue) | ![Updated](https://img.shields.io/github/last-commit/sandstromviktor/toml-editor?style=flat&label=%20&display_timestamp=committer) | ![Language](https://img.shields.io/github/languages/top/sandstromviktor/toml-editor?style=flat) |
-| [dangdennis/toml-action](https://github.com/dangdennis/toml-action)           |  ✅  |  ❌   |  ❌  | `0.4.0`           | [toml](https://github.com/BinaryMuse/toml-node)        |      ![Stars](https://img.shields.io/github/stars/dangdennis/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/dangdennis/toml-action?style=flat&label=%20&color=blue)      |   ![Updated](https://img.shields.io/github/last-commit/dangdennis/toml-action?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/dangdennis/toml-action?style=flat)      |
-| [sebasptsch/toml-edit-action](https://github.com/sebasptsch/toml-edit-action) |  ❌  |  ✅   |  ❌  | `1.0.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) | ![Stars](https://img.shields.io/github/stars/sebasptsch/toml-edit-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/sebasptsch/toml-edit-action?style=flat&label=%20&color=blue) | ![Updated](https://img.shields.io/github/last-commit/sebasptsch/toml-edit-action?style=flat&label=%20&display_timestamp=committer) | ![Language](https://img.shields.io/github/languages/top/sebasptsch/toml-edit-action?style=flat) |
-| [Larry-Le/toml-editor](https://github.com/Larry-Le/toml-editor)               |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |        ![Stars](https://img.shields.io/github/stars/Larry-Le/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/Larry-Le/toml-editor?style=flat&label=%20&color=blue)        |    ![Updated](https://img.shields.io/github/last-commit/Larry-Le/toml-editor?style=flat&label=%20&display_timestamp=committer)     | ![Language](https://img.shields.io/github/languages/top/Larry-Le/toml-editor?style=flat)        |
+| Repository                                                                    | Read | Write | Path | TOML&nbsp;Version | TOML&nbsp;Parser                                       |                                                                                                              Star                                                                                                              |                                                         Last&nbsp;Updated                                                          | Repository&nbsp;Language                                                                        |
+| :---------------------------------------------------------------------------- | :--: | :---: | :--: | :---------------- | :----------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------- |
+| [cssnr/toml-action](https://github.com/cssnr/toml-action)                     |  ✅  |  ✅   |  ✅  | `1.0.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) |           ![Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&label=%20&color=blue)           |      ![Updated](https://img.shields.io/github/last-commit/cssnr/toml-action?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/cssnr/toml-action?style=flat)           |
+| [SebRollen/toml-action](https://github.com/SebRollen/toml-action)             |  ✅  |  ❌   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |       ![Stars](https://img.shields.io/github/stars/SebRollen/toml-action?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/SebRollen/toml-action?style=flat&label=%20&color=blue)       |    ![Updated](https://img.shields.io/github/last-commit/SebRollen/toml-action?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/SebRollen/toml-action?style=flat)       |
+| [ciiiii/toml-editor](https://github.com/ciiiii/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/ciiiii/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/ciiiii/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/ciiiii/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/ciiiii/toml-editor?style=flat)          |
+| [colt-1/toml-editor](https://github.com/colt-1/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/colt-1/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/colt-1/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/colt-1/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/colt-1/toml-editor?style=flat)          |
+| [rahulp959/toml-editor](https://github.com/rahulp959/toml-editor)             |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |       ![Stars](https://img.shields.io/github/stars/rahulp959/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/rahulp959/toml-editor?style=flat&label=%20&color=blue)       |    ![Updated](https://img.shields.io/github/last-commit/rahulp959/toml-editor?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/rahulp959/toml-editor?style=flat)       |
+| [kaachod/toml-editor](https://github.com/kaachod/toml-editor)                 |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |         ![Stars](https://img.shields.io/github/stars/kaachod/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/kaachod/toml-editor?style=flat&label=%20&color=blue)         |     ![Updated](https://img.shields.io/github/last-commit/kaachod/toml-editor?style=flat&label=%20&display_timestamp=committer)     | ![Language](https://img.shields.io/github/languages/top/kaachod/toml-editor?style=flat)         |
+| [sandstromviktor/toml-editor](https://github.com/sandstromviktor/toml-editor) |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      | ![Stars](https://img.shields.io/github/stars/sandstromviktor/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/sandstromviktor/toml-editor?style=flat&label=%20&color=blue) | ![Updated](https://img.shields.io/github/last-commit/sandstromviktor/toml-editor?style=flat&label=%20&display_timestamp=committer) | ![Language](https://img.shields.io/github/languages/top/sandstromviktor/toml-editor?style=flat) |
+| [dangdennis/toml-action](https://github.com/dangdennis/toml-action)           |  ✅  |  ❌   |  ❌  | `0.4.0`           | [toml](https://github.com/BinaryMuse/toml-node)        |      ![Stars](https://img.shields.io/github/stars/dangdennis/toml-action?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/dangdennis/toml-action?style=flat&label=%20&color=blue)      |   ![Updated](https://img.shields.io/github/last-commit/dangdennis/toml-action?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/dangdennis/toml-action?style=flat)      |
+| [sebasptsch/toml-edit-action](https://github.com/sebasptsch/toml-edit-action) |  ❌  |  ✅   |  ❌  | `1.0.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) | ![Stars](https://img.shields.io/github/stars/sebasptsch/toml-edit-action?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/sebasptsch/toml-edit-action?style=flat&label=%20&color=blue) | ![Updated](https://img.shields.io/github/last-commit/sebasptsch/toml-edit-action?style=flat&label=%20&display_timestamp=committer) | ![Language](https://img.shields.io/github/languages/top/sebasptsch/toml-edit-action?style=flat) |
+| [Larry-Le/toml-editor](https://github.com/Larry-Le/toml-editor)               |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |        ![Stars](https://img.shields.io/github/stars/Larry-Le/toml-editor?style=flat&label=%20&color=forestgreen)&nbsp;![Fork](https://img.shields.io/github/forks/Larry-Le/toml-editor?style=flat&label=%20&color=blue)        |    ![Updated](https://img.shields.io/github/last-commit/Larry-Le/toml-editor?style=flat&label=%20&display_timestamp=committer)     | ![Language](https://img.shields.io/github/languages/top/Larry-Le/toml-editor?style=flat)        |
 
 ## Inputs
 
@@ -191,7 +191,7 @@ Default: [file](#file)
 ```yaml
 - name: 'TOML Action'
   id: toml
-  uses: cssnr/toml-action@master
+  uses: cssnr/toml-action@v1
   with:
     file: file.toml
     path: author.name
