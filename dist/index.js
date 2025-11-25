@@ -30405,7 +30405,7 @@ async function main() {
     coreExports.info(`🏳️ Starting TOML Action - ${version}`);
     const inputs = {
         file: coreExports.getInput('file', { required: true }),
-        path: coreExports.getInput('path', { required: true }),
+        path: coreExports.getInput('path'),
         value: coreExports.getInput('value'),
         write: coreExports.getBooleanInput('write'),
         output: coreExports.getInput('output'),
@@ -30422,18 +30422,13 @@ async function main() {
     coreExports.startGroup('Data');
     console.log(data);
     coreExports.endGroup();
-    const values = JSONPath({ path: inputs.path, json: data });
-    console.log('values:', values);
-    if (!values.length) {
-        return coreExports.setFailed(`No Values for Path: ${inputs.path}`);
-    }
-    const value = values[0];
+    const value = parseJSONPath(inputs.path, data);
     coreExports.info(`➡️ Parsed Value: \u001b[36;1m${value}`);
-    coreExports.info(`value type: \u001b[33;1m${typeof value}`);
-    if (inputs.value) {
+    coreExports.info(`          type: \u001b[33;1m${typeof value}`);
+    if (inputs.path && inputs.value) {
         const parsed = parseValue(inputs.value);
         coreExports.info(`📝 Updating Value: \u001b[36;1m${parsed}`);
-        coreExports.info(`value type: \u001b[33;1m${typeof parsed}`);
+        coreExports.info(`             type: \u001b[33;1m${typeof parsed}`);
         setJSONPath(data, inputs.path, inputs.value);
         coreExports.startGroup('Updated Data');
         console.log(data);
@@ -30459,16 +30454,22 @@ async function main() {
     coreExports.setOutput('toml', toml);
     coreExports.info(`✅ \u001b[32;1mFinished Success`);
 }
+function parseJSONPath(value, data) {
+    if (!value)
+        return '';
+    const values = JSONPath({ path: value, json: data });
+    console.log('values:', values);
+    if (!values.length) {
+        throw new Error(`No Values for Path: ${value}`);
+    }
+    return values[0];
+}
 function parseValue(value) {
     try {
         const parsed = JSON.parse(value);
-        if (typeof parsed === 'string' ||
-            typeof parsed === 'number' ||
-            typeof parsed === 'boolean' ||
-            parsed === null) {
-            return parsed;
-        }
-        return value;
+        if (typeof parsed === 'object')
+            return value;
+        return parsed;
     }
     catch {
         return value;
