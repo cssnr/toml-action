@@ -51,34 +51,34 @@ authors = [{ name="Shane" }]
 
 </details>
 
-**Get a Value.**
+**Get a Value**
 
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   id: toml
   uses: cssnr/toml-action@v1
   with:
-    file: '.github/test/test.toml'
-    path: '$.project.authors[0].name'
+    file: .github/test/test.toml
+    path: $.project.authors[0].name
 
-- name: 'Echo Value'
+- name: Echo Value
   run: |
     echo "${{ steps.toml.outputs.value }}"
 ```
 
 Results: `Shane`
 
-**Edit a Value.**
+**Edit a Value**
 
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   uses: cssnr/toml-action@v1
   with:
-    file: '.github/test/test.toml'
-    path: '$.project.authors[0].name'
-    value: 'I Made This'
+    file: .github/test/test.toml
+    path: $.project.authors[0].name
+    value: I Made This
 
-- name: 'Cat File'
+- name: Cat File
   run: |
     cat ".github/test/test.toml"
 ```
@@ -103,13 +103,13 @@ Note: the results are different from the source, but the structure is identical.
 **Parse a File**
 
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   id: toml
   uses: cssnr/toml-action@v1
   with:
-    file: '.github/test/test.toml'
+    file: .github/test/test.toml
 
-- name: 'Echo Results'
+- name: Echo Results
   run: |
     echo "name: ${{ fromJSON(steps.toml.outputs.data).project.name }}"
     echo "data: ${{ fromJSON(steps.toml.outputs.data) }}"
@@ -201,6 +201,8 @@ Array key: `$.key.nested[0]`
 
 Value to edit/update at the given [path](#path).
 
+Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a string, boolean or number.
+
 Leaving this blank will only read the value from [path](#path) and output the results.
 
 #### write
@@ -226,15 +228,17 @@ Default: [file](#file)
 | data   | JSON Data    |
 | toml   | TOML String  |
 
+Note: All outputs are strings parsed with `JSON.stringify()`.
+
 ```yaml
-- name: 'TOML Action'
+- name: TOML Action
   id: toml
   uses: cssnr/toml-action@v1
   with:
     file: file.toml
     path: author.name
 
-- name: 'Echo Outputs'
+- name: Echo Outputs
   env:
     toml: ${{ steps.toml.outputs.toml }}
   run: |
