@@ -1,0 +1,90 @@
+name: "Test"
+
+# actions-up-ignore-file
+
+on:
+  workflow_dispatch:
+  #schedule:
+  #  - cron: "18 18 * * 1,3,5"
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/test.yaml"
+      - "dist/**"
+      - "src/**"
+      - "package*.json"
+      - "requirements*.txt"
+      - "action.yml"
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v5
+
+      - name: "Debug event.json"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: cat "${GITHUB_EVENT_PATH}"
+
+      - name: "Debug CTX github"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        env:
+          GITHUB_CTX: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CTX"
+
+      - name: "Debug Environment"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: env
+
+      - name: "Test Local Action"
+        id: test
+        uses: ./
+        with:
+          file: ".github/test/test.toml"
+          path: "$.project.authors[0].name"
+          value: "I Made This"
+          write: false
+
+      #- name: "Debug"
+      #  if: ${{ !github.event.act }}
+      #  continue-on-error: true
+      #  run: |
+      #    cat ".github/test/pyproject.toml"
+
+      - name: "Validate Outputs"
+        #if: ${{ !github.event.act }}
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.test.outputs) }}
+          data: |
+            value: Shane
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
+            toml:
+
+      - name: "Verify JSON"
+        #if: ${{ !github.event.act }}
+        run: |
+          echo "name: ${{ fromJSON(steps.test.outputs.data).project.name }}"
+          if [ "${{ fromJSON(steps.test.outputs.data).project.name }}" != "toml-action" ];then
+            echo "Output Invalid: data.project.name"
+            exit 1
+          fi
+
+      - name: "Schedule Failure Notification"
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          description: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}

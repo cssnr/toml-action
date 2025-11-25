@@ -1,0 +1,34 @@
+name: "TOML Action"
+description: "TOML 1.0.0 Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File."
+author: "Shane"
+
+branding:
+  icon: "type"
+  color: "orange"
+
+inputs:
+  file:
+    description: "TOML File Path"
+    required: true
+  path:
+    description: "JSONPath to Read or Edit"
+    required: true
+  value:
+    description: "Value to Edit/Update"
+  write:
+    description: "Write Updates to File"
+    default: "true"
+  output:
+    description: "Write Result to File"
+
+outputs:
+  value:
+    description: "Parsed Value"
+  data:
+    description: "JSON Data"
+  toml:
+    description: "TOML String"
+
+runs:
+  using: "node24"
+  main: "dist/index.js"

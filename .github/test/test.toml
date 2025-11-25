@@ -1,0 +1,6 @@
+title = "TOML Example"
+
+[project]
+name = "toml-action"
+dynamic = ["version"]
+authors = [{ name="Shane" }]

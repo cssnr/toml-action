@@ -1,0 +1,5 @@
+<svg width="512" height="512" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <path d="m22.76,6.83l0,3.25l-5,0l0,15.09l-3.5,0l0,-15.09l-5,0l0,-3.25l13.5,0z" fill="#000" stroke="#fff" stroke-width="0.5" transform="matrix(1, 0, 0, 1, 0, 0)"/>
+ <path d="m2,2l6.2,0l0,3.09l-2.86,0l0,21.8l2.86,0l0,3.11l-6.2,0l0,-28z" fill="#BF5700" stroke="#fff" stroke-width="0.5"/>
+ <path d="m30,30l-6.2,0l0,-3.09l2.86,0l0,-21.8l-2.86,0l0,-3.11l6.2,0l0,28z" fill="#BF5700" stroke="#fff" stroke-width="0.5"/>
+</svg>

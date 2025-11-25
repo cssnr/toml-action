@@ -1,0 +1,18 @@
+# IDE
+.idea/
+.vscode/
+
+# Tools
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+eslint_report.json
+
+# Build
+dist/
+node_modules/
+.github/disabled/
+
+# Files
+.github/PULL_REQUEST_TEMPLATE/
+.github/pull_request_template.md
