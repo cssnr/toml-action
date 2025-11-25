@@ -32,13 +32,13 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-[TOML 1.0.0](https://toml.io/en/v1.0.0) Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File.
+TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File.
 
 This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
-Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for TOML parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
+Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.0.0](https://toml.io/en/v1.0.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for JSONPath.
 
-<details><summary>View Sample TOML File</summary>
+<details><summary>View Example TOML File</summary>
 
 ```toml
 title = "TOML Example"
@@ -63,7 +63,7 @@ authors = [{ name="Shane" }]
 
 - name: 'Echo Value'
   run: |
-    echo "value: ${{ steps.toml.outputs.value }}"
+    echo "${{ steps.toml.outputs.value }}"
 ```
 
 Results: `Shane`
@@ -114,7 +114,6 @@ See the [Inputs](#Inputs) for more options...
 ### Upcoming
 
 - Convert input File/JSON/YAML to TOML
-- Only read TOML File without a Path?
 
 > [!TIP]  
 > Please submit a [Feature Request](https://github.com/cssnr/toml-action/discussions/categories/feature-requests)
