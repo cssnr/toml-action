@@ -13,7 +13,7 @@ async function main() {
     // Parse Inputs
     const inputs = {
         file: core.getInput('file', { required: true }),
-        path: core.getInput('path', { required: true }),
+        path: core.getInput('path'),
         value: core.getInput('value'),
         write: core.getBooleanInput('write'),
         output: core.getInput('output'),
@@ -33,21 +33,16 @@ async function main() {
     console.log(data)
     core.endGroup() // Data
 
-    // Parse Value from Data
-    const values = JSONPath({ path: inputs.path, json: data })
-    console.log('values:', values)
-    if (!values.length) {
-        return core.setFailed(`No Values for Path: ${inputs.path}`)
-    }
-    const value = values[0]
+    // Parse Value from Path
+    const value = parseJSONPath(inputs.path, data)
     core.info(`➡️ Parsed Value: \u001b[36;1m${value}`)
-    core.info(`value type: \u001b[33;1m${typeof value}`)
+    core.info(`          type: \u001b[33;1m${typeof value}`)
 
     // Set Value on Data
-    if (inputs.value) {
+    if (inputs.path && inputs.value) {
         const parsed = parseValue(inputs.value)
         core.info(`📝 Updating Value: \u001b[36;1m${parsed}`)
-        core.info(`value type: \u001b[33;1m${typeof parsed}`)
+        core.info(`             type: \u001b[33;1m${typeof parsed}`)
         setJSONPath(data, inputs.path, inputs.value)
         core.startGroup('Updated Data')
         console.log(data)
@@ -80,18 +75,21 @@ async function main() {
     core.info(`✅ \u001b[32;1mFinished Success`)
 }
 
-function parseValue(value: string): string | number | boolean | null {
+function parseJSONPath(value: string, data: object) {
+    if (!value) return ''
+    const values = JSONPath({ path: value, json: data })
+    console.log('values:', values)
+    if (!values.length) {
+        throw new Error(`No Values for Path: ${value}`)
+    }
+    return values[0]
+}
+
+function parseValue(value: string): string | number | boolean {
     try {
         const parsed = JSON.parse(value)
-        if (
-            typeof parsed === 'string' ||
-            typeof parsed === 'number' ||
-            typeof parsed === 'boolean' ||
-            parsed === null
-        ) {
-            return parsed
-        }
-        return value
+        if (typeof parsed === 'object') return value
+        return parsed
     } catch {
         return value
     }

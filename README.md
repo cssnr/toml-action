@@ -32,7 +32,7 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-TOML 1.0.0 Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File.
+[TOML 1.0.0](https://toml.io/en/v1.0.0) Action to Read or Edit Values using JSONPath and Output or Write the Results to Outputs or File.
 
 This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
@@ -142,7 +142,7 @@ Most of these actions are forks/clones of each other and none of them support JS
 | Input             | Default&nbsp;Value | Description&nbsp;of&nbsp;Input                    |
 | :---------------- | :----------------- | :------------------------------------------------ |
 | [file](#file)     | _Required_         | TOML File Path                                    |
-| [path](#path)     | _Required_         | [JSONPath](https://jsonpath.com/) to Read or Edit |
+| [path](#path)     | -                  | [JSONPath](https://jsonpath.com/) to Read or Edit |
 | [value](#value)   | -                  | Value to Edit/Update                              |
 | [write](#write)   | `true`             | Write Updates to [file](#file)                    |
 | [output](#output) | [file](#file)      | Write to a Different File                         |
@@ -155,6 +155,8 @@ This is the TOML file to process.
 
 A [JSONPath](https://jsonpath.com/) key to read or edit.
 
+Leaving this blank will only read the file and output the JSON/TOML results.
+
 String key: `$.key`  
 Nested key: `$.key.nested`  
 Array key: `$.key.nested[0]`
@@ -163,13 +165,13 @@ Array key: `$.key.nested[0]`
 
 Value to edit/update at the given [path](#path).
 
-Leaving this blank will only read the value.
+Leaving this blank will only read the value from [path](#path) and output the results.
 
 #### write
 
 Write the results with the [value](#value) back to the [file](#file).
 
-To write to a different file, set the [output](#output).
+To write to a different file, set the [output](#output) to the file path.
 
 Default: `true`
 

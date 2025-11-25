@@ -12,7 +12,6 @@ inputs:
     required: true
   path:
     description: "JSONPath to Read or Edit"
-    required: true
   value:
     description: "Value to Edit/Update"
   write:
