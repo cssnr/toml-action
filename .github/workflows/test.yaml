@@ -80,7 +80,6 @@ jobs:
         uses: ./
         with:
           file: ${{ env.file }}
-          path: $.project.authors[0].name
 
       - name: "Validate Updated Outputs"
         #if: ${{ !github.event.act }}
