@@ -1,20 +1,21 @@
 [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/toml-action?sort=semver&filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/toml-action/tags)
 [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/toml-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/toml-action/releases)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/toml-action?logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/toml-action/releases/latest)
-[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/toml-action/dist%2Findex.js?logo=bookstack&logoColor=white&label=dist%20size)](https://github.com/cssnr/toml-action/blob/master/src)
-[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/release.yaml?logo=cachet&label=release)](https://github.com/cssnr/toml-action/actions/workflows/release.yaml)
-[![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/test.yaml?logo=cachet&label=test)](https://github.com/cssnr/toml-action/actions/workflows/test.yaml)
-[![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/lint.yaml?logo=cachet&label=lint)](https://github.com/cssnr/toml-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_toml-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_toml-action)
-[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/toml-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
-[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/toml-action?logo=htmx)](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/toml-action?logo=github&label=updated)](https://github.com/cssnr/toml-action/pulse)
+[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/release.yaml?logo=norton&logoColor=white&label=release)](https://github.com/cssnr/toml-action/actions/workflows/release.yaml)
+[![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/test.yaml?logo=norton&logoColor=white&label=test)](https://github.com/cssnr/toml-action/actions/workflows/test.yaml)
+[![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/toml-action/lint.yaml?logo=norton&logoColor=white&label=lint)](https://github.com/cssnr/toml-action/actions/workflows/lint.yaml)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/toml-action?logo=listenhub&label=updated)](https://github.com/cssnr/toml-action/pulse)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/toml-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/toml-action)
-[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/toml-action?logo=github)](https://github.com/cssnr/toml-action/graphs/contributors)
-[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/toml-action?logo=github)](https://github.com/cssnr/toml-action/discussions)
-[![GitHub Forks](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&logo=github)](https://github.com/cssnr/toml-action/forks)
-[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&logo=github)](https://github.com/cssnr/toml-action/stargazers)
-[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&label=org%20stars)](https://cssnr.github.io/)
+[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/toml-action/dist%2Findex.js?logo=bookstack&logoColor=white&label=dist%20size)](https://github.com/cssnr/toml-action/blob/master/src)
+[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/toml-action?logo=buffer&label=repo%20size)](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
+[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/toml-action?logo=devbox)](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/toml-action?logo=southwestairlines)](https://github.com/cssnr/toml-action/graphs/contributors)
+[![GitHub Issues](https://img.shields.io/github/issues/cssnr/toml-action?logo=codeforces&logoColor=white)](https://github.com/cssnr/toml-action/issues)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/toml-action?logo=theconversation)](https://github.com/cssnr/toml-action/discussions)
+[![GitHub Forks](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&logo=forgejo&logoColor=white)](https://github.com/cssnr/toml-action/forks)
+[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&logo=gleam&logoColor=white)](https://github.com/cssnr/toml-action/stargazers)
+[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=apachespark&logoColor=white&label=org%20stars)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-72a5f2?logo=kofi&label=support)](https://ko-fi.com/cssnr)
 
@@ -32,11 +33,11 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File.
+TOML 1.1.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File.
 
 This action was built from the ground up using active libraries. See the [Comparison](#Comparison) for more details.
 
-Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.0.0](https://toml.io/en/v1.0.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for [JSONPath](https://jsonpath.com/).
+Uses [smol-toml](https://github.com/squirrelchat/smol-toml) for [TOML 1.1.0](https://toml.io/en/v1.1.0) parsing and [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) for [JSONPath](https://jsonpath.com/).
 
 <details><summary>View Example TOML File</summary>
 
@@ -164,7 +165,7 @@ Most of these actions are forks/clones of each other and none of them support JS
 
 | Repository                                                                    | Read | Write | Path | TOML&nbsp;Version | TOML&nbsp;Parser                                       |                                                                                                           Stars                                                                                                           |                                                         Last&nbsp;Updated                                                          | Repository&nbsp;Language                                                                        |
 | :---------------------------------------------------------------------------- | :--: | :---: | :--: | :---------------- | :----------------------------------------------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------- |
-| [cssnr/toml-action](https://github.com/cssnr/toml-action)                     |  ✅  |  ✅   |  ✅  | `1.0.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) |           ![Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&label=%20&color=blue)           |      ![Updated](https://img.shields.io/github/last-commit/cssnr/toml-action?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/cssnr/toml-action?style=flat)           |
+| [cssnr/toml-action](https://github.com/cssnr/toml-action)                     |  ✅  |  ✅   |  ✅  | `1.1.0`           | [smol-toml](https://github.com/squirrelchat/smol-toml) |           ![Stars](https://img.shields.io/github/stars/cssnr/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/cssnr/toml-action?style=flat&label=%20&color=blue)           |      ![Updated](https://img.shields.io/github/last-commit/cssnr/toml-action?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/cssnr/toml-action?style=flat)           |
 | [SebRollen/toml-action](https://github.com/SebRollen/toml-action)             |  ✅  |  ❌   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |       ![Stars](https://img.shields.io/github/stars/SebRollen/toml-action?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/SebRollen/toml-action?style=flat&label=%20&color=blue)       |    ![Updated](https://img.shields.io/github/last-commit/SebRollen/toml-action?style=flat&label=%20&display_timestamp=committer)    | ![Language](https://img.shields.io/github/languages/top/SebRollen/toml-action?style=flat)       |
 | [ciiiii/toml-editor](https://github.com/ciiiii/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/ciiiii/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/ciiiii/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/ciiiii/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/ciiiii/toml-editor?style=flat)          |
 | [colt-1/toml-editor](https://github.com/colt-1/toml-editor)                   |  ❌  |  ✅   |  ❌  | `1.0.0-rc.1`      | [iarna/toml](https://github.com/iarna/iarna-toml)      |          ![Stars](https://img.shields.io/github/stars/colt-1/toml-editor?style=flat&label=%20&color=forestgreen) ![Fork](https://img.shields.io/github/forks/colt-1/toml-editor?style=flat&label=%20&color=blue)          |     ![Updated](https://img.shields.io/github/last-commit/colt-1/toml-editor?style=flat&label=%20&display_timestamp=committer)      | ![Language](https://img.shields.io/github/languages/top/colt-1/toml-editor?style=flat)          |
@@ -192,6 +193,8 @@ This is the TOML file path to process relative to the working directory.
 #### path
 
 A [JSONPath](https://jsonpath.com/) key to read or edit.
+
+This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and supports bare selectors `project.version`.
 
 Leaving this blank will only read the file and output the JSON/TOML results.
 

@@ -1,5 +1,5 @@
 name: "TOML Action"
-description: "TOML 1.0.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File."
+description: "TOML 1.1.0 Action to Parse, Read or Edit Values using JSONPath and set the Results to Outputs or Write to a File."
 author: "Shane"
 
 branding:

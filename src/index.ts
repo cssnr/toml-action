@@ -5,7 +5,7 @@ import { JSONPath } from 'jsonpath-plus'
 import { parse, stringify } from 'smol-toml'
 
 async function main() {
-    const version = process.env.GITHUB_ACTION_REF
+    const version: string = process.env.GITHUB_ACTION_REF
         ? `\u001b[35;1m${process.env.GITHUB_ACTION_REF}`
         : '\u001b[33;1mSource'
     core.info(`🏳️ Starting TOML Action - ${version}`)
