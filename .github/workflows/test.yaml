@@ -108,7 +108,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.toml.outputs) }}
           data: |
-            value: null
+            value: ""
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
