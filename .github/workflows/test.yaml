@@ -77,8 +77,8 @@ jobs:
         if: ${{ !github.event.act }}
         continue-on-error: true
         run: |
-          echo "::group::env.temp"
-          cat ${{ env.temp }}
+          echo "::group::env.file"
+          cat ${{ env.file }}
           echo "::endgroup::"
 
       - name: "Read Updated TOML File"
@@ -95,7 +95,12 @@ jobs:
         env:
           OUTPUT: ${{ toJSON(steps.toml.outputs) }}
         run: |
+          echo "::group::output"
           echo "${OUTPUT}"
+          echo "::endgroup::"
+          echo "::group::env.temp"
+          cat ${{ env.temp }}
+          echo "::endgroup::"
 
       - name: "Validate Updated Outputs"
         #if: ${{ !github.event.act }}
