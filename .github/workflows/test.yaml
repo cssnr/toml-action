@@ -88,6 +88,7 @@ jobs:
         with:
           file: ${{ env.file }}
           output: ${{ env.temp }}
+          path: $.project.authors[0].name
 
       - name: "Debug 2"
         if: ${{ !github.event.act }}
@@ -108,7 +109,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.toml.outputs) }}
           data: |
-            value: ""
+            value: I Made This
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
