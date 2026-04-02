@@ -73,6 +73,14 @@ jobs:
         run: |
           echo "Output Invalid: data.project.name" && exit 1
 
+      - name: "Debug 1"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: |
+          echo "::group::env.temp"
+          cat ${{ env.temp }}
+          echo "::endgroup::"
+
       - name: "Read Updated TOML File"
         #if: ${{ !github.event.act }}
         id: toml
@@ -80,6 +88,14 @@ jobs:
         with:
           file: ${{ env.file }}
           output: ${{ env.temp }}
+
+      - name: "Debug 2"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        env:
+          OUTPUT: ${{ toJSON(steps.toml.outputs) }}
+        run: |
+          echo "${OUTPUT}"
 
       - name: "Validate Updated Outputs"
         #if: ${{ !github.event.act }}
