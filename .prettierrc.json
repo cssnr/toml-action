@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/prettierrc",
   "semi": false,
   "singleQuote": true,
   "printWidth": 90,
@@ -6,13 +7,8 @@
     {
       "files": ["**/*.html", "**/*.yaml", "**/*.yml"],
       "options": {
-        "singleQuote": false
-      }
-    },
-    {
-      "files": ["**/*.js", "**/*.mjs", "**/*.ts", "**/*.css", "**/*.scss"],
-      "options": {
-        "tabWidth": 4
+        "singleQuote": false,
+        "printWidth": 120
       }
     }
   ]
