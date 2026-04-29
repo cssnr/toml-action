@@ -1,8 +1,12 @@
+# Generic
 .idea/
 *.iml
 .vscode/
 node_modules/
+.*cache
+*.log
 eslint_report.json
+# App
 .env
 .secrets
 .vars

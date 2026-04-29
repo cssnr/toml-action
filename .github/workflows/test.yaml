@@ -33,20 +33,18 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Debug event.json"
         if: ${{ !github.event.act }}
         continue-on-error: true
         run: cat "${GITHUB_EVENT_PATH}"
-
       - name: "Debug CTX github"
         if: ${{ !github.event.act }}
         continue-on-error: true
         env:
           GITHUB_CTX: ${{ toJSON(github) }}
         run: echo "$GITHUB_CTX"
-
       - name: "Debug Environment"
         if: ${{ !github.event.act }}
         continue-on-error: true
@@ -75,6 +73,14 @@ jobs:
         run: |
           echo "Output Invalid: data.project.name" && exit 1
 
+      - name: "Debug 1"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        run: |
+          echo "::group::env.file"
+          cat ${{ env.file }}
+          echo "::endgroup::"
+
       - name: "Read Updated TOML File"
         #if: ${{ !github.event.act }}
         id: toml
@@ -82,6 +88,20 @@ jobs:
         with:
           file: ${{ env.file }}
           output: ${{ env.temp }}
+          path: $.project.authors[0].name
+
+      - name: "Debug 2"
+        if: ${{ !github.event.act }}
+        continue-on-error: true
+        env:
+          OUTPUT: ${{ toJSON(steps.toml.outputs) }}
+        run: |
+          echo "::group::output"
+          echo "${OUTPUT}"
+          echo "::endgroup::"
+          echo "::group::env.temp"
+          cat ${{ env.temp }}
+          echo "::endgroup::"
 
       - name: "Validate Updated Outputs"
         #if: ${{ !github.event.act }}
@@ -89,7 +109,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.toml.outputs) }}
           data: |
-            value:
+            value: I Made This
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
@@ -107,4 +127,4 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          description: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
+          description: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
