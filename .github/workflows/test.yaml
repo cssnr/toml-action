@@ -137,7 +137,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.append-test.outputs) }}
           data: |
-            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version","new-tag"],"authors":[{"name":"Shane"}]}}'
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version","new-tag"],"authors":[{"name":"I Made This"}]}}'
 
       - name: "Test Set Non-Existent Path"
         id: create-test
@@ -153,7 +153,7 @@ jobs:
           outputs: ${{ toJSON(steps.create-test.outputs) }}
           data: |
             value: '0.0.1'
-            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"Shane"}]},"general":{"version":"0.0.1"}}'
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Test Append to Non-Existent Path (creates array)"
         id: append-create-test
@@ -169,7 +169,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.append-create-test.outputs) }}
           data: |
-            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"Shane"}]}}'
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}

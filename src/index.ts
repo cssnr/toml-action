@@ -39,6 +39,10 @@ async function main() {
   if (inputs.path) {
     try {
       value = parseJSONPath(inputs.path, data)
+      // Deep clone to prevent mutation by setValueAtPath below
+      if (typeof value === 'object') {
+        value = JSON.parse(JSON.stringify(value))
+      }
     } catch (e) {
       if (!inputs.value) throw e
     }
