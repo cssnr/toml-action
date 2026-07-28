@@ -41,7 +41,7 @@ async function main() {
       value = parseJSONPath(inputs.path, data)
       // Deep clone to prevent mutation by setValueAtPath below
       if (typeof value === 'object') {
-        value = JSON.parse(JSON.stringify(value))
+        value = structuredClone(value)
       }
     } catch (e) {
       if (!inputs.value) throw e
@@ -133,7 +133,7 @@ function parseJSONPathSegments(path: string): PathSegment[] {
       const bracketPart = part.slice(bracketIndex)
       const indexMatches = bracketPart.matchAll(/\[(\d+)\]/g)
       for (const match of indexMatches) {
-        segments.push({ type: 'index', index: parseInt(match[1], 10) })
+        segments.push({ type: 'index', index: Number.parseInt(match[1], 10) })
       }
     }
   }
