@@ -34,7 +34,7 @@ jobs:
       - name: "Install"
         id: install
         run: |
-          npm ci
+          npm ci --ignore-scripts
 
       - name: "eslint"
         id: eslint
