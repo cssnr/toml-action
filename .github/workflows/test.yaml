@@ -152,7 +152,6 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.create-test.outputs) }}
           data: |
-            value: '0.0.1'
             data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Test Append to Non-Existent Path (creates array)"
