@@ -4,7 +4,7 @@ import path from 'node:path'
 import { JSONPath } from 'jsonpath-plus'
 import { parse, stringify } from 'smol-toml'
 
-async function main() {
+async function main() /* NOSONAR */ {
   const version: string = process.env.GITHUB_ACTION_REF
     ? `\u001b[35;1m${process.env.GITHUB_ACTION_REF}`
     : '\u001b[33;1mSource'
@@ -131,7 +131,7 @@ function parseJSONPathSegments(path: string): PathSegment[] {
 
     if (bracketIndex >= 0) {
       const bracketPart = part.slice(bracketIndex)
-      const indexMatches = bracketPart.matchAll(/\[(\d+)\]/g)
+      const indexMatches = bracketPart.matchAll(/\[(\d+)]/g)
       for (const match of indexMatches) {
         segments.push({ type: 'index', index: Number.parseInt(match[1], 10) })
       }
@@ -146,7 +146,12 @@ function createContainer(nextSegment: PathSegment): any {
   return {}
 }
 
-function setValueAtPath(obj: any, path: string, value: any, append: boolean) {
+function setValueAtPath /* NOSONAR */(
+  obj: any,
+  path: string,
+  value: any,
+  append: boolean,
+) {
   const segments = parseJSONPathSegments(path)
   if (!segments.length) throw new Error(`Invalid Path: ${path}`)
 
