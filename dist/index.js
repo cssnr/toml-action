@@ -31492,7 +31492,7 @@ function parseJSONPathSegments(path) {
         }
         if (bracketIndex >= 0) {
             const bracketPart = part.slice(bracketIndex);
-            const indexMatches = bracketPart.matchAll(/\[(\d+)\]/g);
+            const indexMatches = bracketPart.matchAll(/\[(\d+)]/g);
             for (const match of indexMatches) {
                 segments.push({ type: 'index', index: Number.parseInt(match[1], 10) });
             }
