@@ -31356,6 +31356,7 @@ async function main() {
         value: getInput('value'),
         write: getBooleanInput('write'),
         output: getInput('output'),
+        append: getBooleanInput('append'),
     };
     startGroup('Inputs');
     console.log(inputs);
@@ -31369,14 +31370,23 @@ async function main() {
     startGroup('Data');
     info(JSON.stringify(data, null, 2));
     endGroup();
-    const value = parseJSONPath(inputs.path, data);
+    let value = '';
+    if (inputs.path) {
+        try {
+            value = parseJSONPath(inputs.path, data);
+        }
+        catch (e) {
+            if (!inputs.value)
+                throw e;
+        }
+    }
     info(`➡️ Parsed Value: \u001b[36;1m${value}`);
     info(`    type: \u001b[33;1m${typeof value}`);
     if (inputs.path && inputs.value) {
         const parsed = parseValue(inputs.value);
         info(`📝 Updating Value: \u001b[36;1m${parsed}`);
         info(`    type: \u001b[33;1m${typeof parsed}`);
-        setJSONPath(data, inputs.path, inputs.value);
+        setValueAtPath(data, inputs.path, parsed, inputs.append);
         startGroup('Updated Data');
         info(JSON.stringify(data, null, 2));
         endGroup();
@@ -31422,14 +31432,82 @@ function parseValue(value) {
         return value;
     }
 }
-function setJSONPath(obj, path, value) {
-    const pointers = JSONPath({ path, json: obj, resultType: 'pointer' });
-    for (const pointer of pointers) {
-        let target = obj;
-        const parts = pointer.slice(1).split('/');
-        for (let i = 0; i < parts.length - 1; i++)
-            target = target[parts[i]];
-        target[parts[parts.length - 1]] = value;
+function parseJSONPathSegments(path) {
+    let normalized = path;
+    if (normalized.startsWith('$.'))
+        normalized = normalized.slice(2);
+    else if (normalized.startsWith('$'))
+        normalized = normalized.slice(1);
+    if (!normalized)
+        return [];
+    const parts = normalized.split('.');
+    const segments = [];
+    for (const part of parts) {
+        if (!part)
+            continue;
+        const bracketIndex = part.indexOf('[');
+        const key = bracketIndex >= 0 ? part.slice(0, bracketIndex) : part;
+        if (key) {
+            segments.push({ type: 'key', key });
+        }
+        if (bracketIndex >= 0) {
+            const bracketPart = part.slice(bracketIndex);
+            const indexMatches = bracketPart.matchAll(/\[(\d+)\]/g);
+            for (const match of indexMatches) {
+                segments.push({ type: 'index', index: parseInt(match[1], 10) });
+            }
+        }
+    }
+    return segments;
+}
+function createContainer(nextSegment) {
+    if (nextSegment.type === 'index')
+        return [];
+    return {};
+}
+function setValueAtPath(obj, path, value, append) {
+    const segments = parseJSONPathSegments(path);
+    if (!segments.length)
+        throw new Error(`Invalid Path: ${path}`);
+    let current = obj;
+    for (let i = 0; i < segments.length; i++) {
+        const segment = segments[i];
+        const isLast = i === segments.length - 1;
+        if (segment.type === 'key') {
+            if (isLast) {
+                if (append) {
+                    if (!(segment.key in current)) {
+                        current[segment.key] = [value];
+                    }
+                    else if (Array.isArray(current[segment.key])) {
+                        current[segment.key].push(value);
+                    }
+                    else {
+                        current[segment.key] = [current[segment.key], value];
+                    }
+                }
+                else {
+                    current[segment.key] = value;
+                }
+            }
+            else {
+                if (!(segment.key in current)) {
+                    current[segment.key] = createContainer(segments[i + 1]);
+                }
+                current = current[segment.key];
+            }
+        }
+        else if (segment.type === 'index') {
+            if (isLast) {
+                current[segment.index] = value;
+            }
+            else {
+                if (!current[segment.index]) {
+                    current[segment.index] = createContainer(segments[i + 1]);
+                }
+                current = current[segment.index];
+            }
+        }
     }
 }
 try {

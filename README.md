@@ -145,6 +145,7 @@ See the [Inputs](#Inputs) for more options...
 - Parse TOML File
 - Read TOML Value
 - Edit TOML Value
+- Append to Array
 - Write the Results
 - Output Parsed Value
 - Output JSON Results
@@ -183,6 +184,7 @@ Most of these actions are forks/clones of each other and none of them support JS
 | [file](#file)     | _Required_         | TOML File Path                                    |
 | [path](#path)     | -                  | [JSONPath](https://jsonpath.com/) to Read or Edit |
 | [value](#value)   | -                  | Value to Edit/Update                              |
+| [append](#append) | `false`            | Append Value to Array                             |
 | [write](#write)   | `true`             | Write Updates to [file](#file)                    |
 | [output](#output) | [file](#file)      | Write to a Different File                         |
 
@@ -204,11 +206,51 @@ Array key: `$.key.nested[0]`
 
 #### value
 
-Value to edit/update at the given [path](#path).
+Value to edit/update at the given [path](#path). Non-existent paths are automatically created.
 
 Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a string, boolean or number.
 
 Leaving this blank will only read the value from [path](#path) and output the results.
+
+Non-existent paths are automatically created when setting a value.
+
+#### append
+
+When `true`, appends the [value](#value) to an existing array at the [path](#path).
+
+- If the path points to an existing array: the value is pushed onto the array.
+- If the path does not exist: an array is created with the value as its single element.
+- If the path points to an existing non-array value: the value is converted to an array and the new value is appended.
+
+Default: `false`
+
+**Append to existing array:**
+
+```yaml
+- name: TOML Action
+  uses: cssnr/toml-action@v1
+  with:
+    file: file.toml
+    path: $.project.dynamic
+    value: new-tag
+    append: true
+```
+
+Given a file with `dynamic = ["version"]`, this produces `dynamic = ["version", "new-tag"]`.
+
+**Create array and append:**
+
+```yaml
+- name: TOML Action
+  uses: cssnr/toml-action@v1
+  with:
+    file: file.toml
+    path: $.project.tags
+    value: stable
+    append: true
+```
+
+If `tags` does not exist, this creates `tags = ["stable"]`.
 
 #### write
 

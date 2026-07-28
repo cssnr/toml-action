@@ -122,6 +122,55 @@ jobs:
           fi
           cat "${{ env.temp }}"
 
+      - name: "Test Append to Existing Array"
+        id: append-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.dynamic
+          value: new-tag
+          append: true
+
+      - name: "Validate Append Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-test.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version","new-tag"],"authors":[{"name":"Shane"}]}}'
+
+      - name: "Test Set Non-Existent Path"
+        id: create-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.general.version
+          value: "0.0.1"
+
+      - name: "Validate Create Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.create-test.outputs) }}
+          data: |
+            value: '0.0.1'
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"Shane"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Append to Non-Existent Path (creates array)"
+        id: append-create-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.project.tags
+          value: stable
+          append: true
+
+      - name: "Validate Append Create Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-create-test.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"Shane"}]}}'
+
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
         uses: sarisia/actions-status-discord@v1
