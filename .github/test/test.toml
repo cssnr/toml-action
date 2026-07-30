@@ -4,3 +4,5 @@ title = "TOML Example"
 name = "toml-action"
 dynamic = ["version"]
 authors = [{ name="Shane" }]
+"slash/key" = "slash-value"
+"tilde~key" = "tilde-value"

@@ -116,6 +116,9 @@ function parseJSONPathSegments(path: string): PathSegment[] {
 
   if (!normalized) return []
 
+  // Normalize bracket-quoted string keys: $['key'] or $["key"] → dot notation
+  normalized = normalized.replace(/\['([^']*)']|\["([^"]*)"]/g, '.$1$2')
+
   const parts = normalized.split('.')
   const segments: PathSegment[] = []
 
@@ -152,6 +155,29 @@ function setValueAtPath /* NOSONAR */(
   value: any,
   append: boolean,
 ) {
+  // Try jsonpath-plus first for existing paths (full JSONPath syntax support)
+  const pointers = JSONPath({ path, json: obj, resultType: 'pointer' })
+
+  if (pointers.length > 0) {
+    for (const pointer of pointers) {
+      let target = obj
+      const parts = pointer.slice(1).split('/')
+      for (let i = 0; i < parts.length - 1; i++)
+        target = target[parts[i].replaceAll('~1', '/').replaceAll('~0', '~')]
+      const lastKey = parts[parts.length - 1].replaceAll('~1', '/').replaceAll('~0', '~')
+
+      if (append && Array.isArray(target[lastKey])) {
+        target[lastKey].push(value)
+      } else if (append) {
+        target[lastKey] = [target[lastKey], value]
+      } else {
+        target[lastKey] = value
+      }
+    }
+    return
+  }
+
+  // Path doesn't exist — create intermediate structure
   const segments = parseJSONPathSegments(path)
   if (!segments.length) throw new Error(`Invalid Path: ${path}`)
 

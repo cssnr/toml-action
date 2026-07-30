@@ -31480,6 +31480,7 @@ function parseJSONPathSegments(path) {
         normalized = normalized.slice(1);
     if (!normalized)
         return [];
+    normalized = normalized.replace(/\['([^']*)']|\["([^"]*)"]/g, '.$1$2');
     const parts = normalized.split('.');
     const segments = [];
     for (const part of parts) {
@@ -31506,6 +31507,26 @@ function createContainer(nextSegment) {
     return {};
 }
 function setValueAtPath(obj, path, value, append) {
+    const pointers = JSONPath({ path, json: obj, resultType: 'pointer' });
+    if (pointers.length > 0) {
+        for (const pointer of pointers) {
+            let target = obj;
+            const parts = pointer.slice(1).split('/');
+            for (let i = 0; i < parts.length - 1; i++)
+                target = target[parts[i].replaceAll('~1', '/').replaceAll('~0', '~')];
+            const lastKey = parts[parts.length - 1].replaceAll('~1', '/').replaceAll('~0', '~');
+            if (append && Array.isArray(target[lastKey])) {
+                target[lastKey].push(value);
+            }
+            else if (append) {
+                target[lastKey] = [target[lastKey], value];
+            }
+            else {
+                target[lastKey] = value;
+            }
+        }
+        return;
+    }
     const segments = parseJSONPathSegments(path);
     if (!segments.length)
         throw new Error(`Invalid Path: ${path}`);
