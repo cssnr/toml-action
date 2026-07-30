@@ -199,7 +199,7 @@ jobs:
           outputs: ${{ toJSON(steps.bracket-set.outputs) }}
           data: |
             value: toml-action
-            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"new-name","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"new-name","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Test Bracket-Quoted Key Create (non-existent)"
         id: bracket-create
@@ -215,7 +215,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.bracket-create.outputs) }}
           data: |
-            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"},"new section":"test-value"}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"},"new section":"test-value"}'
 
       - name: "Test Wildcard Set"
         id: wildcard-set
@@ -231,7 +231,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.wildcard-set.outputs) }}
           data: |
-            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"Wildcard"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"Wildcard"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Test Slash Key Read (existing)"
         id: slash-read
@@ -262,7 +262,7 @@ jobs:
           outputs: ${{ toJSON(steps.slash-set.outputs) }}
           data: |
             value: slash-value
-            data: '{"title":"TOML Example","slash/key":"new-slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+            data: '{"title":"TOML Example","slash/key":"new-slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Test Tilde Key Read (existing)"
         id: tilde-read
@@ -293,7 +293,7 @@ jobs:
           outputs: ${{ toJSON(steps.tilde-set.outputs) }}
           data: |
             value: tilde-value
-            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"new-tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"new-tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
