@@ -31510,6 +31510,9 @@ function setValueAtPath(obj, path, value, append) {
     const pointers = JSONPath({ path, json: obj, resultType: 'pointer' });
     if (pointers.length > 0) {
         for (const pointer of pointers) {
+            if (pointer === '') {
+                throw new Error(`Cannot set a value at the document root: ${path}`);
+            }
             let target = obj;
             const parts = pointer.slice(1).split('/');
             for (let i = 0; i < parts.length - 1; i++)
