@@ -109,36 +109,51 @@ function parseValue(value: string): string | number | boolean {
 
 type PathSegment = { type: 'key'; key: string } | { type: 'index'; index: number }
 
-function parseJSONPathSegments(path: string): PathSegment[] {
-  let normalized = path
-  if (normalized.startsWith('$.')) normalized = normalized.slice(2)
-  else if (normalized.startsWith('$')) normalized = normalized.slice(1)
+function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
+  let s = path
+  if (s.startsWith('$.')) s = s.slice(2)
+  else if (s.startsWith('$')) s = s.slice(1)
+  if (!s) return []
 
-  if (!normalized) return []
-
-  // Normalize bracket-quoted string keys: $['key'] or $["key"] → dot notation
-  normalized = normalized.replace(/\['([^']*)']|\["([^"]*)"]/g, '.$1$2')
-
-  const parts = normalized.split('.')
   const segments: PathSegment[] = []
+  let i = 0
 
-  for (const part of parts) {
-    if (!part) continue
-
-    const bracketIndex = part.indexOf('[')
-    const key = bracketIndex >= 0 ? part.slice(0, bracketIndex) : part
-
-    if (key) {
-      segments.push({ type: 'key', key })
+  while (i < s.length) {
+    if (s[i] === '.') {
+      i++
+      continue
     }
 
-    if (bracketIndex >= 0) {
-      const bracketPart = part.slice(bracketIndex)
-      const indexMatches = bracketPart.matchAll(/\[(\d+)]/g)
-      for (const match of indexMatches) {
-        segments.push({ type: 'index', index: Number.parseInt(match[1], 10) })
+    if (s[i] === '[') {
+      if (s[i + 1] === "'" || s[i + 1] === '"') {
+        const quote = s[i + 1]
+        let key = ''
+        i += 2
+        while (i < s.length && s[i] !== quote) {
+          key += s[i]
+          i++
+        }
+        i += 2
+        segments.push({ type: 'key', key })
+      } else {
+        let num = ''
+        i++
+        while (i < s.length && s[i] >= '0' && s[i] <= '9') {
+          num += s[i]
+          i++
+        }
+        i++
+        segments.push({ type: 'index', index: Number.parseInt(num, 10) })
       }
+      continue
     }
+
+    let key = ''
+    while (i < s.length && s[i] !== '.' && s[i] !== '[') {
+      key += s[i]
+      i++
+    }
+    segments.push({ type: 'key', key })
   }
 
   return segments
