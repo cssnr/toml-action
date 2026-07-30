@@ -160,6 +160,13 @@ function setValueAtPath /* NOSONAR */(
 
   if (pointers.length > 0) {
     for (const pointer of pointers) {
+      // Root match ("$" resolves to pointer ""): this action edits existing
+      // keys in a TOML file, it does not replace the whole document — fail
+      // clearly instead of silently writing a stray obj[''] entry.
+      if (pointer === '') {
+        throw new Error(`Cannot set a value at the document root: ${path}`)
+      }
+
       let target = obj
       const parts = pointer.slice(1).split('/')
       for (let i = 0; i < parts.length - 1; i++)
