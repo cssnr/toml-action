@@ -31390,7 +31390,7 @@ async function main() {
     const inputs = {
         file: getInput('file', { required: true }),
         path: getInput('path'),
-        value: getInput('value'),
+        value: getInput('value', { trimWhitespace: false }),
         write: getBooleanInput('write'),
         output: getInput('output'),
         append: getBooleanInput('append'),
@@ -31480,10 +31480,16 @@ function parseJSONPathSegments(path) {
         s = s.slice(1);
     if (!s)
         return [];
+    if (s.startsWith('.')) {
+        throw new Error(`Recursive descent is not supported for creating a path: ${path}`);
+    }
     const segments = [];
     let i = 0;
     while (i < s.length) {
         if (s[i] === '.') {
+            if (s[i + 1] === '.') {
+                throw new Error(`Recursive descent is not supported for creating a path: ${path}`);
+            }
             i++;
             continue;
         }
@@ -31492,11 +31498,26 @@ function parseJSONPathSegments(path) {
                 const quote = s[i + 1];
                 let key = '';
                 i += 2;
+                let closed = false;
                 while (i < s.length && s[i] !== quote) {
+                    if (s[i] === '\\' && i + 1 < s.length) {
+                        key += s[i + 1];
+                        i += 2;
+                        continue;
+                    }
                     key += s[i];
                     i++;
                 }
-                i += 2;
+                if (i < s.length && s[i] === quote) {
+                    i++;
+                    if (s[i] === ']') {
+                        i++;
+                        closed = true;
+                    }
+                }
+                if (!closed) {
+                    throw new Error(`Invalid quoted key in path: ${path}`);
+                }
                 segments.push({ type: 'key', key });
             }
             else {
@@ -31506,6 +31527,9 @@ function parseJSONPathSegments(path) {
                     num += s[i];
                     i++;
                 }
+                if (num === '' || s[i] !== ']') {
+                    throw new Error(`Unsupported array access in path (creating requires a plain index like [0]): ${path}`);
+                }
                 i++;
                 segments.push({ type: 'index', index: Number.parseInt(num, 10) });
             }
@@ -31513,7 +31537,11 @@ function parseJSONPathSegments(path) {
         }
         let key = '';
         while (i < s.length && s[i] !== '.' && s[i] !== '[') {
-            key += s[i];
+            const c = s[i];
+            if (!/^[A-Za-z0-9_\-~/]$/.test(c)) {
+                throw new Error(`Unsupported character '${c}' in path when creating a path: ${path}`);
+            }
+            key += c;
             i++;
         }
         segments.push({ type: 'key', key });
@@ -31524,6 +31552,11 @@ function createContainer(nextSegment) {
     if (nextSegment.type === 'index')
         return [];
     return {};
+}
+function guardContainer(value, what) {
+    if (value === null || typeof value !== 'object') {
+        throw new Error(`Cannot create a nested path under ${what}: existing value is not a table or array`);
+    }
 }
 function setValueAtPath(obj, path, value, append) {
     const pointers = JSONPath({ path, json: obj, resultType: 'pointer' });
@@ -31578,6 +31611,7 @@ function setValueAtPath(obj, path, value, append) {
                     current[segment.key] = createContainer(segments[i + 1]);
                 }
                 current = current[segment.key];
+                guardContainer(current, `key '${segment.key}'`);
             }
         }
         else if (segment.type === 'index') {
@@ -31585,10 +31619,11 @@ function setValueAtPath(obj, path, value, append) {
                 current[segment.index] = value;
             }
             else {
-                if (!current[segment.index]) {
+                if (!(segment.index in current)) {
                     current[segment.index] = createContainer(segments[i + 1]);
                 }
                 current = current[segment.index];
+                guardContainer(current, `index ${segment.index}`);
             }
         }
     }
@@ -31598,6 +31633,5 @@ try {
 }
 catch (e) {
     console.log(e);
-    if (e instanceof Error)
-        setFailed(e.message);
+    setFailed(e instanceof Error ? e.message : String(e));
 }

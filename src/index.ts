@@ -14,7 +14,7 @@ async function main() /* NOSONAR */ {
   const inputs = {
     file: core.getInput('file', { required: true }),
     path: core.getInput('path'),
-    value: core.getInput('value'),
+    value: core.getInput('value', { trimWhitespace: false }),
     write: core.getBooleanInput('write'),
     output: core.getInput('output'),
     append: core.getBooleanInput('append'),
@@ -114,12 +114,21 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
   if (s.startsWith('$.')) s = s.slice(2)
   else if (s.startsWith('$')) s = s.slice(1)
   if (!s) return []
+  // $..name leaves a leading dot after stripping the root ($.) — recursive
+  // descent is query syntax, not a creatable path
+  if (s.startsWith('.')) {
+    throw new Error(`Recursive descent is not supported for creating a path: ${path}`)
+  }
 
   const segments: PathSegment[] = []
   let i = 0
 
   while (i < s.length) {
     if (s[i] === '.') {
+      // Recursive descent ($..) is query syntax, not a creatable path
+      if (s[i + 1] === '.') {
+        throw new Error(`Recursive descent is not supported for creating a path: ${path}`)
+      }
       i++
       continue
     }
@@ -129,11 +138,26 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
         const quote = s[i + 1]
         let key = ''
         i += 2
+        let closed = false
         while (i < s.length && s[i] !== quote) {
+          if (s[i] === '\\' && i + 1 < s.length) {
+            key += s[i + 1]
+            i += 2
+            continue
+          }
           key += s[i]
           i++
         }
-        i += 2
+        if (i < s.length && s[i] === quote) {
+          i++
+          if (s[i] === ']') {
+            i++
+            closed = true
+          }
+        }
+        if (!closed) {
+          throw new Error(`Invalid quoted key in path: ${path}`)
+        }
         segments.push({ type: 'key', key })
       } else {
         let num = ''
@@ -141,6 +165,13 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
         while (i < s.length && s[i] >= '0' && s[i] <= '9') {
           num += s[i]
           i++
+        }
+        // Filters [?()], wildcards [*], slices [0:2], unions [0,1], and
+        // malformed brackets are query syntax, not creatable array indices
+        if (num === '' || s[i] !== ']') {
+          throw new Error(
+            `Unsupported array access in path (creating requires a plain index like [0]): ${path}`,
+          )
         }
         i++
         segments.push({ type: 'index', index: Number.parseInt(num, 10) })
@@ -150,7 +181,15 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
 
     let key = ''
     while (i < s.length && s[i] !== '.' && s[i] !== '[') {
-      key += s[i]
+      const c = s[i]
+      // Bare keys may only contain letters, digits, and - _ ~ /; any other
+      // character is JSONPath query syntax that cannot be turned into a key
+      if (!/^[A-Za-z0-9_\-~/]$/.test(c)) {
+        throw new Error(
+          `Unsupported character '${c}' in path when creating a path: ${path}`,
+        )
+      }
+      key += c
       i++
     }
     segments.push({ type: 'key', key })
@@ -162,6 +201,14 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
 function createContainer(nextSegment: PathSegment): any {
   if (nextSegment.type === 'index') return []
   return {}
+}
+
+function guardContainer(value: any, what: string): void {
+  if (value === null || typeof value !== 'object') {
+    throw new Error(
+      `Cannot create a nested path under ${what}: existing value is not a table or array`,
+    )
+  }
 }
 
 function setValueAtPath /* NOSONAR */(
@@ -226,15 +273,17 @@ function setValueAtPath /* NOSONAR */(
           current[segment.key] = createContainer(segments[i + 1])
         }
         current = current[segment.key]
+        guardContainer(current, `key '${segment.key}'`)
       }
     } else if (segment.type === 'index') {
       if (isLast) {
         current[segment.index] = value
       } else {
-        if (!current[segment.index]) {
+        if (!(segment.index in current)) {
           current[segment.index] = createContainer(segments[i + 1])
         }
         current = current[segment.index]
+        guardContainer(current, `index ${segment.index}`)
       }
     }
   }
@@ -244,5 +293,5 @@ try {
   await main()
 } catch (e) {
   console.log(e)
-  if (e instanceof Error) core.setFailed(e.message)
+  core.setFailed(e instanceof Error ? e.message : String(e))
 }

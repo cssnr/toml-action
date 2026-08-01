@@ -295,6 +295,62 @@ jobs:
             value: tilde-value
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"new-tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
+      - name: "Test Reject Filter (unsupported)"
+        id: reject-filter
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.project.authors[?(@.name == 'x')]
+          value: bad
+
+      - name: "Validate Reject Filter"
+        if: ${{ steps.reject-filter.outcome != 'failure' }}
+        run: |
+          echo "Expected reject-filter to fail but it did not" && exit 1
+
+      - name: "Test Reject Recursive Descent (unsupported)"
+        id: reject-recursive
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $..nonexistent
+          value: bad
+
+      - name: "Validate Reject Recursive Descent"
+        if: ${{ steps.reject-recursive.outcome != 'failure' }}
+        run: |
+          echo "Expected reject-recursive to fail but it did not" && exit 1
+
+      - name: "Test Reject Wildcard Create (unsupported)"
+        id: reject-wildcard
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.missing[*].name
+          value: bad
+
+      - name: "Validate Reject Wildcard Create"
+        if: ${{ steps.reject-wildcard.outcome != 'failure' }}
+        run: |
+          echo "Expected reject-wildcard to fail but it did not" && exit 1
+
+      - name: "Test Reject Invalid Character (unsupported)"
+        id: reject-char
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.foo(bar)
+          value: bad
+
+      - name: "Validate Reject Invalid Character"
+        if: ${{ steps.reject-char.outcome != 'failure' }}
+        run: |
+          echo "Expected reject-char to fail but it did not" && exit 1
+
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
         uses: sarisia/actions-status-discord@v1
