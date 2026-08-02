@@ -214,6 +214,8 @@ Leaving this blank will only read the value from [path](#path) and output the re
 
 To set an empty string, use the JSON-encoded form `""` (e.g. `value: '""'`), since a blank `value` is treated as read mode.
 
+Note: integers larger than 2^53 cannot be represented exactly by `JSON.parse()`; such values are rounded and serialized as floats (e.g. `9007199254740993` is written as `9007199254740992.0`).
+
 #### append
 
 When `true`, appends the [value](#value) to an existing array at the [path](#path).
