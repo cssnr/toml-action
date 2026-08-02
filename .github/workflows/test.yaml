@@ -68,11 +68,6 @@ jobs:
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
-      - name: "Validate JSON Data"
-        if: ${{ fromJSON(steps.test.outputs.data).project.name != 'toml-action' }}
-        run: |
-          echo "Output Invalid: data.project.name" && exit 1
-
       - name: "Debug 1"
         if: ${{ !github.event.act }}
         continue-on-error: true
@@ -155,9 +150,11 @@ jobs:
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
       - name: "Validate Create Value Empty"
-        if: ${{ steps.create-test.outputs.value != '' }}
-        run: |
-          echo "Expected create-test value output to be empty but it was not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.create-test.outputs) }}
+          data: |
+            value: ''
 
       - name: "Test Append to Non-Existent Path (creates array)"
         id: append-create-test
@@ -176,9 +173,11 @@ jobs:
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
 
       - name: "Validate Append Create Value Empty"
-        if: ${{ steps.append-create-test.outputs.value != '' }}
-        run: |
-          echo "Expected append-create-test value output to be empty but it was not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-create-test.outputs) }}
+          data: |
+            value: ''
 
       - name: "Test Append to Existing Non-Array Value (string)"
         id: append-scalar-string
@@ -369,9 +368,12 @@ jobs:
           value: bad
 
       - name: "Validate Reject Filter"
-        if: ${{ steps.reject-filter.outcome != 'failure' }}
-        run: |
-          echo "Expected reject-filter to fail but it did not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-filter.outputs) }}
+          data: |
+            value: bad
+          invert: true
 
       - name: "Test Reject Recursive Descent (unsupported)"
         id: reject-recursive
@@ -383,9 +385,12 @@ jobs:
           value: bad
 
       - name: "Validate Reject Recursive Descent"
-        if: ${{ steps.reject-recursive.outcome != 'failure' }}
-        run: |
-          echo "Expected reject-recursive to fail but it did not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-recursive.outputs) }}
+          data: |
+            value: bad
+          invert: true
 
       - name: "Test Reject Wildcard Create (unsupported)"
         id: reject-wildcard
@@ -397,9 +402,12 @@ jobs:
           value: bad
 
       - name: "Validate Reject Wildcard Create"
-        if: ${{ steps.reject-wildcard.outcome != 'failure' }}
-        run: |
-          echo "Expected reject-wildcard to fail but it did not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-wildcard.outputs) }}
+          data: |
+            value: bad
+          invert: true
 
       - name: "Test Reject Invalid Character (unsupported)"
         id: reject-char
@@ -411,9 +419,12 @@ jobs:
           value: bad
 
       - name: "Validate Reject Invalid Character"
-        if: ${{ steps.reject-char.outcome != 'failure' }}
-        run: |
-          echo "Expected reject-char to fail but it did not" && exit 1
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-char.outputs) }}
+          data: |
+            value: bad
+          invert: true
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
