@@ -297,5 +297,5 @@ try {
   await main()
 } catch (e) {
   console.log(e)
-  core.setFailed(e instanceof Error ? e.message : String(e))
+  if (e instanceof Error) core.setFailed(e.message)
 }

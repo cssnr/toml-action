@@ -31633,5 +31633,6 @@ try {
 }
 catch (e) {
     console.log(e);
-    setFailed(e instanceof Error ? e.message : String(e));
+    if (e instanceof Error)
+        setFailed(e.message);
 }
