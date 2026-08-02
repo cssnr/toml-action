@@ -154,6 +154,11 @@ jobs:
           data: |
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
 
+      - name: "Validate Create Value Empty"
+        if: ${{ steps.create-test.outputs.value != '' }}
+        run: |
+          echo "Expected create-test value output to be empty but it was not" && exit 1
+
       - name: "Test Append to Non-Existent Path (creates array)"
         id: append-create-test
         uses: ./
@@ -169,6 +174,11 @@ jobs:
           outputs: ${{ toJSON(steps.append-create-test.outputs) }}
           data: |
             data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+
+      - name: "Validate Append Create Value Empty"
+        if: ${{ steps.append-create-test.outputs.value != '' }}
+        run: |
+          echo "Expected append-create-test value output to be empty but it was not" && exit 1
 
       - name: "Test Bracket-Quoted Key Read (existing)"
         id: bracket-read

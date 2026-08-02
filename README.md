@@ -269,13 +269,16 @@ Default: [file](#file)
 
 ## Outputs
 
-| Output | Description  |
-| :----- | :----------- |
-| value  | Parsed Value |
-| data   | JSON Data    |
-| toml   | TOML String  |
+| Output | Description                                 |
+| :----- | :------------------------------------------ |
+| value  | Parsed Value from Path (empty when created) |
+| data   | JSON Data                                   |
+| toml   | TOML String                                 |
 
 Note: All outputs are strings parsed with `JSON.stringify()`.
+
+Note: The `value` output is empty when the `path` does not exist in the file and a new key is created.
+Read the created value back from the `data` output (`fromJSON(...)`) in that case.
 
 ```yaml
 - name: TOML Action
