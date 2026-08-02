@@ -145,6 +145,7 @@ See the [Inputs](#Inputs) for more options...
 - Parse TOML File
 - Read TOML Value
 - Edit TOML Value
+- Append to Array
 - Write the Results
 - Output Parsed Value
 - Output JSON Results
@@ -183,6 +184,7 @@ Most of these actions are forks/clones of each other and none of them support JS
 | [file](#file)     | _Required_         | TOML File Path                                    |
 | [path](#path)     | -                  | [JSONPath](https://jsonpath.com/) to Read or Edit |
 | [value](#value)   | -                  | Value to Edit/Update                              |
+| [append](#append) | `false`            | Append Value to Array                             |
 | [write](#write)   | `true`             | Write Updates to [file](#file)                    |
 | [output](#output) | [file](#file)      | Write to a Different File                         |
 
@@ -198,17 +200,59 @@ This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and su
 
 Leaving this blank will only read the file and output the JSON/TOML results.
 
-String key: `$.key`  
-Nested key: `$.key.nested`  
-Array key: `$.key.nested[0]`
+- String key: `$.key`
+- Nested key: `$.key.nested`
+- Array key: `$.key.nested[0]`
+- Quoted key: `$['key with spaces']` (single or double quotes)
 
 #### value
 
-Value to edit/update at the given [path](#path).
+Value to edit/update at the given [path](#path). Non-existent paths are automatically created.
 
-Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a string, boolean or number.
+- Creating a path only supports plain keys and indices (`$.a.b[0]`); JSONPath query syntax (recursive descent `$..`, filters, wildcards, slices) cannot be used.
+- All inputs are strings, but `value` is parsed with `JSON.parse()` into a string, boolean or number.
+- Leading and trailing whitespace in `value` is preserved and written as-is.
+- Integers larger than 2^53 are rounded and serialized as floats (e.g. `9007199254740993` is written as `9007199254740992.0`).
+- Leaving `value` blank only reads the value from [path](#path) and outputs the results.
+- To set an empty string, use the JSON-encoded form `""` (e.g. `value: '""'`), since a blank `value` is treated as read mode.
 
-Leaving this blank will only read the value from [path](#path) and output the results.
+#### append
+
+When `true`, appends the [value](#value) to an existing array at the [path](#path).
+
+- If the path points to an existing array: the value is pushed onto the array.
+- If the path does not exist: an array is created with the value as its single element.
+- If the path points to an existing non-array value: the value is converted to an array and the new value is appended.
+
+Default: `false`
+
+**Append to existing array:**
+
+```yaml
+- name: TOML Action
+  uses: cssnr/toml-action@v1
+  with:
+    file: file.toml
+    path: $.project.dynamic
+    value: new-tag
+    append: true
+```
+
+Given a file with `dynamic = ["version"]`, this produces `dynamic = ["version", "new-tag"]`.
+
+**Create array and append:**
+
+```yaml
+- name: TOML Action
+  uses: cssnr/toml-action@v1
+  with:
+    file: file.toml
+    path: $.project.tags
+    value: stable
+    append: true
+```
+
+If `tags` does not exist, this creates `tags = ["stable"]`.
 
 #### write
 
@@ -227,13 +271,16 @@ Default: [file](#file)
 
 ## Outputs
 
-| Output | Description  |
-| :----- | :----------- |
-| value  | Parsed Value |
-| data   | JSON Data    |
-| toml   | TOML String  |
+| Output | Description                                 |
+| :----- | :------------------------------------------ |
+| value  | Parsed Value from Path (empty when created) |
+| data   | JSON Data                                   |
+| toml   | TOML String                                 |
 
 Note: All outputs are strings parsed with `JSON.stringify()`.
+
+Note: The `value` output is empty when the `path` does not exist in the file and a new key is created.
+Read the created value back from the `data` output (`fromJSON(...)`) in that case.
 
 ```yaml
 - name: TOML Action

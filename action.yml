@@ -19,6 +19,9 @@ inputs:
     default: "true"
   output:
     description: "Write Result to File"
+  append:
+    description: "Append Value to Array"
+    default: "false"
 
 outputs:
   value:

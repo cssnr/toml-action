@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "Debug event.json"
         if: ${{ !github.event.act }}
@@ -65,13 +65,8 @@ jobs:
           outputs: ${{ toJSON(steps.test.outputs) }}
           data: |
             value: Shane
-            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
-
-      - name: "Validate JSON Data"
-        if: ${{ fromJSON(steps.test.outputs.data).project.name != 'toml-action' }}
-        run: |
-          echo "Output Invalid: data.project.name" && exit 1
 
       - name: "Debug 1"
         if: ${{ !github.event.act }}
@@ -110,7 +105,7 @@ jobs:
           outputs: ${{ toJSON(steps.toml.outputs) }}
           data: |
             value: I Made This
-            data: '{"title":"TOML Example","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]}}'
             toml:
 
       - name: "Validate Output File"
@@ -121,6 +116,315 @@ jobs:
             exit 1
           fi
           cat "${{ env.temp }}"
+
+      - name: "Test Append to Existing Array"
+        id: append-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.dynamic
+          value: new-tag
+          append: true
+
+      - name: "Validate Append Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-test.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version","new-tag"],"authors":[{"name":"I Made This"}]}}'
+
+      - name: "Test Set Non-Existent Path"
+        id: create-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.general.version
+          value: "0.0.1"
+
+      - name: "Validate Create Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.create-test.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Validate Create Value Empty"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.create-test.outputs) }}
+          data: |
+            value: ''
+
+      - name: "Test Append to Non-Existent Path (creates array)"
+        id: append-create-test
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.project.tags
+          value: stable
+          append: true
+
+      - name: "Validate Append Create Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-create-test.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"authors":[{"name":"I Made This"}],"tags":["stable"]},"general":{"version":"0.0.1"}}'
+
+      - name: "Validate Append Create Value Empty"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-create-test.outputs) }}
+          data: |
+            value: ''
+
+      - name: "Test Append to Existing Non-Array Value (string)"
+        id: append-scalar-string
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.name
+          value: new-name
+          append: true
+
+      - name: "Validate Append Scalar String Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-string.outputs) }}
+          data: |
+            value: toml-action
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":["toml-action","new-name"],"dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Append to Existing Non-Array Value (number)"
+        id: append-scalar-number
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.general.version
+          value: 42
+          append: true
+
+      - name: "Validate Append Scalar Number Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-number.outputs) }}
+          data: |
+            value: 0.0.1
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":["0.0.1",42]}}'
+
+      - name: "Test Append to Existing Non-Array Value (boolean)"
+        id: append-scalar-boolean
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.name
+          value: true
+          append: true
+
+      - name: "Validate Append Scalar Boolean Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-boolean.outputs) }}
+          data: |
+            value: toml-action
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":["toml-action",true],"dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Bracket-Quoted Key Read (existing)"
+        id: bracket-read
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $['title']
+
+      - name: "Validate Bracket-Quoted Key Read"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.bracket-read.outputs) }}
+          data: |
+            value: TOML Example
+
+      - name: "Test Bracket-Quoted Key Set (existing)"
+        id: bracket-set
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project['name']
+          value: new-name
+
+      - name: "Validate Bracket-Quoted Key Set"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.bracket-set.outputs) }}
+          data: |
+            value: toml-action
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"new-name","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Bracket-Quoted Key Create (non-existent)"
+        id: bracket-create
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $['new section']
+          value: test-value
+
+      - name: "Validate Bracket-Quoted Key Create"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.bracket-create.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"},"new section":"test-value"}'
+
+      - name: "Test Wildcard Set"
+        id: wildcard-set
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.authors[*].name
+          value: Wildcard
+
+      - name: "Validate Wildcard Set"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.wildcard-set.outputs) }}
+          data: |
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"Wildcard"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Slash Key Read (existing)"
+        id: slash-read
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $['slash/key']
+
+      - name: "Validate Slash Key Read"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.slash-read.outputs) }}
+          data: |
+            value: slash-value
+
+      - name: "Test Slash Key Set (existing)"
+        id: slash-set
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $['slash/key']
+          value: new-slash-value
+
+      - name: "Validate Slash Key Set"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.slash-set.outputs) }}
+          data: |
+            value: slash-value
+            data: '{"title":"TOML Example","slash/key":"new-slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Tilde Key Read (existing)"
+        id: tilde-read
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $['tilde~key']
+
+      - name: "Validate Tilde Key Read"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.tilde-read.outputs) }}
+          data: |
+            value: tilde-value
+
+      - name: "Test Tilde Key Set (existing)"
+        id: tilde-set
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $['tilde~key']
+          value: new-tilde-value
+
+      - name: "Validate Tilde Key Set"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.tilde-set.outputs) }}
+          data: |
+            value: tilde-value
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"new-tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Reject Filter (unsupported)"
+        id: reject-filter
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.project.authors[?(@.name == 'x')]
+          value: bad
+
+      - name: "Validate Reject Filter"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-filter.outputs) }}
+          data: |
+            value: bad
+          invert: true
+
+      - name: "Test Reject Recursive Descent (unsupported)"
+        id: reject-recursive
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $..nonexistent
+          value: bad
+
+      - name: "Validate Reject Recursive Descent"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-recursive.outputs) }}
+          data: |
+            value: bad
+          invert: true
+
+      - name: "Test Reject Wildcard Create (unsupported)"
+        id: reject-wildcard
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.missing[*].name
+          value: bad
+
+      - name: "Validate Reject Wildcard Create"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-wildcard.outputs) }}
+          data: |
+            value: bad
+          invert: true
+
+      - name: "Test Reject Invalid Character (unsupported)"
+        id: reject-char
+        continue-on-error: true
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          path: $.foo(bar)
+          value: bad
+
+      - name: "Validate Reject Invalid Character"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.reject-char.outputs) }}
+          data: |
+            value: bad
+          invert: true
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}

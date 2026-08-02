@@ -4,7 +4,7 @@ import path from 'node:path'
 import { JSONPath } from 'jsonpath-plus'
 import { parse, stringify } from 'smol-toml'
 
-async function main() {
+async function main() /* NOSONAR */ {
   const version: string = process.env.GITHUB_ACTION_REF
     ? `\u001b[35;1m${process.env.GITHUB_ACTION_REF}`
     : '\u001b[33;1mSource'
@@ -14,9 +14,10 @@ async function main() {
   const inputs = {
     file: core.getInput('file', { required: true }),
     path: core.getInput('path'),
-    value: core.getInput('value'),
+    value: core.getInput('value', { trimWhitespace: false }),
     write: core.getBooleanInput('write'),
     output: core.getInput('output'),
+    append: core.getBooleanInput('append'),
   } as const
   core.startGroup('Inputs')
   console.log(inputs)
@@ -33,8 +34,19 @@ async function main() {
   core.info(JSON.stringify(data, null, 2))
   core.endGroup() // Data
 
-  // Parse Value from Path
-  const value = parseJSONPath(inputs.path, data)
+  // Parse Value from Path (graceful when also setting)
+  let value: any = ''
+  if (inputs.path) {
+    try {
+      value = parseJSONPath(inputs.path, data)
+      // Deep clone to prevent mutation by setValueAtPath below
+      if (typeof value === 'object') {
+        value = structuredClone(value)
+      }
+    } catch (e) {
+      if (!inputs.value) throw e
+    }
+  }
   core.info(`➡️ Parsed Value: \u001b[36;1m${value}`)
   core.info(`    type: \u001b[33;1m${typeof value}`)
 
@@ -43,7 +55,7 @@ async function main() {
     const parsed = parseValue(inputs.value)
     core.info(`📝 Updating Value: \u001b[36;1m${parsed}`)
     core.info(`    type: \u001b[33;1m${typeof parsed}`)
-    setJSONPath(data, inputs.path, inputs.value)
+    setValueAtPath(data, inputs.path, parsed, inputs.append)
     core.startGroup('Updated Data')
     core.info(JSON.stringify(data, null, 2))
     core.endGroup() // Updated Data
@@ -95,13 +107,189 @@ function parseValue(value: string): string | number | boolean {
   }
 }
 
-function setJSONPath(obj: any, path: string, value: any) {
+type PathSegment = { type: 'key'; key: string } | { type: 'index'; index: number }
+
+function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
+  let s = path
+  if (s.startsWith('$.')) s = s.slice(2)
+  else if (s.startsWith('$')) s = s.slice(1)
+  if (!s) return []
+  // $..name leaves a leading dot after stripping the root ($.) — recursive
+  // descent is query syntax, not a creatable path
+  if (s.startsWith('.')) {
+    throw new Error(`Recursive descent is not supported for creating a path: ${path}`)
+  }
+
+  const segments: PathSegment[] = []
+  let i = 0
+
+  while (i < s.length) {
+    if (s[i] === '.') {
+      // Recursive descent ($..) is query syntax, not a creatable path
+      if (s[i + 1] === '.') {
+        throw new Error(`Recursive descent is not supported for creating a path: ${path}`)
+      }
+      i++
+      continue
+    }
+
+    if (s[i] === '[') {
+      if (s[i + 1] === "'" || s[i + 1] === '"') {
+        const quote = s[i + 1]
+        let key = ''
+        i += 2
+        let closed = false
+        while (i < s.length && s[i] !== quote) {
+          if (s[i] === '\\' && i + 1 < s.length) {
+            key += s[i + 1]
+            i += 2
+            continue
+          }
+          key += s[i]
+          i++
+        }
+        if (i < s.length && s[i] === quote) {
+          i++
+          if (s[i] === ']') {
+            i++
+            closed = true
+          }
+        }
+        if (!closed) {
+          throw new Error(`Invalid quoted key in path: ${path}`)
+        }
+        segments.push({ type: 'key', key })
+      } else {
+        let num = ''
+        i++
+        while (i < s.length && s[i] >= '0' && s[i] <= '9') {
+          num += s[i]
+          i++
+        }
+        // Filters [?()], wildcards [*], slices [0:2], unions [0,1], and
+        // malformed brackets are query syntax, not creatable array indices
+        if (num === '' || s[i] !== ']') {
+          throw new Error(
+            `Unsupported array access in path (creating requires a plain index like [0]): ${path}`,
+          )
+        }
+        i++
+        segments.push({ type: 'index', index: Number.parseInt(num, 10) })
+      }
+      continue
+    }
+
+    let key = ''
+    while (i < s.length && s[i] !== '.' && s[i] !== '[') {
+      const c = s[i]
+      // TOML v1.1.0 bare keys may only contain ASCII letters, ASCII digits,
+      // underscores, and dashes (A-Za-z0-9_-). The ~ and / characters are also
+      // accepted here to mirror jsonpath-plus bare-path parsing (jsonpath-plus
+      // resolves $.a/b to the key "a/b"); smol-toml quotes any key containing
+      // them when stringifying. Any other character is JSONPath query syntax
+      // that cannot be turned into a key
+      if (!/^[A-Za-z0-9_\-~/]$/.test(c)) {
+        throw new Error(
+          `Unsupported character '${c}' in path when creating a path: ${path}`,
+        )
+      }
+      key += c
+      i++
+    }
+    segments.push({ type: 'key', key })
+  }
+
+  return segments
+}
+
+function createContainer(nextSegment: PathSegment): any {
+  if (nextSegment.type === 'index') return []
+  return {}
+}
+
+function guardContainer(value: any, what: string): void {
+  if (value === null || typeof value !== 'object') {
+    throw new Error(
+      `Cannot create a nested path under ${what}: existing value is not a table or array`,
+    )
+  }
+}
+
+function setValueAtPath /* NOSONAR */(
+  obj: any,
+  path: string,
+  value: any,
+  append: boolean,
+) {
+  // Try jsonpath-plus first for existing paths (full JSONPath syntax support)
   const pointers = JSONPath({ path, json: obj, resultType: 'pointer' })
-  for (const pointer of pointers) {
-    let target = obj
-    const parts = pointer.slice(1).split('/')
-    for (let i = 0; i < parts.length - 1; i++) target = target[parts[i]]
-    target[parts[parts.length - 1]] = value
+
+  if (pointers.length > 0) {
+    for (const pointer of pointers) {
+      // Root match ("$" resolves to pointer ""): this action edits existing
+      // keys in a TOML file, it does not replace the whole document — fail
+      // clearly instead of silently writing a stray obj[''] entry.
+      if (pointer === '') {
+        throw new Error(`Cannot set a value at the document root: ${path}`)
+      }
+
+      let target = obj
+      const parts = pointer.slice(1).split('/')
+      for (let i = 0; i < parts.length - 1; i++)
+        target = target[parts[i].replaceAll('~1', '/').replaceAll('~0', '~')]
+      const lastKey = parts[parts.length - 1].replaceAll('~1', '/').replaceAll('~0', '~')
+
+      if (append && Array.isArray(target[lastKey])) {
+        target[lastKey].push(value)
+      } else if (append) {
+        target[lastKey] = [target[lastKey], value]
+      } else {
+        target[lastKey] = value
+      }
+    }
+    return
+  }
+
+  // Path doesn't exist — create intermediate structure
+  const segments = parseJSONPathSegments(path)
+  if (!segments.length) throw new Error(`Invalid Path: ${path}`)
+
+  let current = obj
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i]
+    const isLast = i === segments.length - 1
+
+    if (segment.type === 'key') {
+      if (isLast) {
+        if (append) {
+          if (!(segment.key in current)) {
+            current[segment.key] = [value]
+          } else if (Array.isArray(current[segment.key])) {
+            current[segment.key].push(value)
+          } else {
+            current[segment.key] = [current[segment.key], value]
+          }
+        } else {
+          current[segment.key] = value
+        }
+      } else {
+        if (!(segment.key in current)) {
+          current[segment.key] = createContainer(segments[i + 1])
+        }
+        current = current[segment.key]
+        guardContainer(current, `key '${segment.key}'`)
+      }
+    } else if (segment.type === 'index') {
+      if (isLast) {
+        current[segment.index] = value
+      } else {
+        if (!(segment.index in current)) {
+          current[segment.index] = createContainer(segments[i + 1])
+        }
+        current = current[segment.index]
+        guardContainer(current, `index ${segment.index}`)
+      }
+    }
   }
 }
 
