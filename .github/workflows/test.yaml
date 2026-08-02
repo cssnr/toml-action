@@ -180,6 +180,60 @@ jobs:
         run: |
           echo "Expected append-create-test value output to be empty but it was not" && exit 1
 
+      - name: "Test Append to Existing Non-Array Value (string)"
+        id: append-scalar-string
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.name
+          value: new-name
+          append: true
+
+      - name: "Validate Append Scalar String Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-string.outputs) }}
+          data: |
+            value: toml-action
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":["toml-action","new-name"],"dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
+      - name: "Test Append to Existing Non-Array Value (number)"
+        id: append-scalar-number
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.general.version
+          value: 42
+          append: true
+
+      - name: "Validate Append Scalar Number Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-number.outputs) }}
+          data: |
+            value: 0.0.1
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":"toml-action","dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":["0.0.1",42]}}'
+
+      - name: "Test Append to Existing Non-Array Value (boolean)"
+        id: append-scalar-boolean
+        uses: ./
+        with:
+          file: ${{ env.file }}
+          output: ${{ env.temp }}
+          path: $.project.name
+          value: true
+          append: true
+
+      - name: "Validate Append Scalar Boolean Output"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.append-scalar-boolean.outputs) }}
+          data: |
+            value: toml-action
+            data: '{"title":"TOML Example","slash/key":"slash-value","tilde~key":"tilde-value","project":{"name":["toml-action",true],"dynamic":["version"],"tags":["stable"],"authors":[{"name":"I Made This"}]},"general":{"version":"0.0.1"}}'
+
       - name: "Test Bracket-Quoted Key Read (existing)"
         id: bracket-read
         uses: ./
