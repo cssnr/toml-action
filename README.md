@@ -200,21 +200,21 @@ This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and su
 
 Leaving this blank will only read the file and output the JSON/TOML results.
 
-String key: `$.key`  
-Nested key: `$.key.nested`  
-Array key: `$.key.nested[0]`
+- String key: `$.key`
+- Nested key: `$.key.nested`
+- Array key: `$.key.nested[0]`
+- Quoted key: `$['key with spaces']` (single or double quotes)
 
 #### value
 
 Value to edit/update at the given [path](#path). Non-existent paths are automatically created.
 
-Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a string, boolean or number.
-
-Leaving this blank will only read the value from [path](#path) and output the results.
-
-To set an empty string, use the JSON-encoded form `""` (e.g. `value: '""'`), since a blank `value` is treated as read mode.
-
-Note: integers larger than 2^53 cannot be represented exactly by `JSON.parse()`; such values are rounded and serialized as floats (e.g. `9007199254740993` is written as `9007199254740992.0`).
+- Creating a path only supports plain keys and indices (`$.a.b[0]`); JSONPath query syntax (recursive descent `$..`, filters, wildcards, slices) cannot be used.
+- All inputs are strings, but `value` is parsed with `JSON.parse()` into a string, boolean or number.
+- Leading and trailing whitespace in `value` is preserved and written as-is.
+- Integers larger than 2^53 are rounded and serialized as floats (e.g. `9007199254740993` is written as `9007199254740992.0`).
+- Leaving `value` blank only reads the value from [path](#path) and outputs the results.
+- To set an empty string, use the JSON-encoded form `""` (e.g. `value: '""'`), since a blank `value` is treated as read mode.
 
 #### append
 
