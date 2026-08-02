@@ -182,8 +182,12 @@ function parseJSONPathSegments(path: string): PathSegment[] /* NOSONAR */ {
     let key = ''
     while (i < s.length && s[i] !== '.' && s[i] !== '[') {
       const c = s[i]
-      // Bare keys may only contain letters, digits, and - _ ~ /; any other
-      // character is JSONPath query syntax that cannot be turned into a key
+      // TOML v1.1.0 bare keys may only contain ASCII letters, ASCII digits,
+      // underscores, and dashes (A-Za-z0-9_-). The ~ and / characters are also
+      // accepted here to mirror jsonpath-plus bare-path parsing (jsonpath-plus
+      // resolves $.a/b to the key "a/b"); smol-toml quotes any key containing
+      // them when stringifying. Any other character is JSONPath query syntax
+      // that cannot be turned into a key
       if (!/^[A-Za-z0-9_\-~/]$/.test(c)) {
         throw new Error(
           `Unsupported character '${c}' in path when creating a path: ${path}`,
