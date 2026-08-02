@@ -212,7 +212,7 @@ Note: All inputs are strings but `value` is parsed with `JSON.parse()` to a stri
 
 Leaving this blank will only read the value from [path](#path) and output the results.
 
-Non-existent paths are automatically created when setting a value.
+To set an empty string, use the JSON-encoded form `""` (e.g. `value: '""'`), since a blank `value` is treated as read mode.
 
 #### append
 
