@@ -57,7 +57,7 @@ authors = [{ name="Shane" }]
 ```yaml
 - name: TOML Action
   id: toml
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: .github/test/test.toml
     path: $.project.authors[0].name
@@ -73,7 +73,7 @@ Results: `Shane`
 
 ```yaml
 - name: TOML Action
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: .github/test/test.toml
     path: $.project.authors[0].name
@@ -106,7 +106,7 @@ Note: the results are different from the source, but the structure is identical.
 ```yaml
 - name: TOML Action
   id: toml
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: .github/test/test.toml
 
@@ -230,7 +230,7 @@ Default: `false`
 
 ```yaml
 - name: TOML Action
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: file.toml
     path: $.project.dynamic
@@ -244,7 +244,7 @@ Given a file with `dynamic = ["version"]`, this produces `dynamic = ["version", 
 
 ```yaml
 - name: TOML Action
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: file.toml
     path: $.project.tags
@@ -285,7 +285,7 @@ Read the created value back from the `data` output (`fromJSON(...)`) in that cas
 ```yaml
 - name: TOML Action
   id: toml
-  uses: cssnr/toml-action@v1
+  uses: cssnr/toml-action@v2
   with:
     file: file.toml
     path: author.name
